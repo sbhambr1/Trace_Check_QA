@@ -1,0 +1,10 @@
+/storage
+/catplan-code-release
+*.vscode
+bert-finetuned-sem_eval-english
+llama-3-8b-chat-doctor
+wandb/
+data_storage/
+models/
+*.txt
+*.pyc
