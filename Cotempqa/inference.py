@@ -38,12 +38,13 @@ def evaluate_cotemporal(model_name, data_path, mode, output_dir, evaluate_result
     elif mode == 'few_shot_math_cot':
         all_prompts = get_prompts(all_data, few_shot_math_template)
         
-    if model_name == 'gpt':
+    if model_name == 'gpt': # currently "gpt-3.5-turbo-1106"
         filename = os.path.basename(data_path)
         output_dir = os.path.join(os.getcwd() + '/', output_dir)
         output_path = os.path.join(output_dir, f"{mode}_{filename}")
         with open(output_path, 'w', encoding='utf-8') as out_f:
             for cnt, prompt in enumerate(all_prompts):
+                api_list = [os.environ["OPENAI_API_KEY"]]
                 chatgpt(out_f, prompt, all_data[cnt], cnt, api_list) 
         
         output_data = []

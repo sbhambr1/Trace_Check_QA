@@ -6,6 +6,7 @@ import jsonlines
 import datetime
 import string
 from collections import Counter
+import openai
 import re
 
 default_template = 'Answer the question based on the context:\n{fact}\nQuestion: {question} Only return the answer.\n'
