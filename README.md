@@ -60,3 +60,30 @@ python create_sft_dataset.py \
     --include_reasoning \
     --reasoning_col label
 ```
+
+5. SFT on Cotempqa example using default settings with QLoRA for the dataset saved in 'path/to/save/dataset_io'
+
+```bash
+python run_sft.py \
+    --dataset_path path/to/save/dataset_io \
+    --output_dir ./llama3_8b_chat_adapter_io \
+    # --hf_token YOUR_HF_TOKEN  # Optional: if needed for model download or push
+    # --wandb_token YOUR_WANDB_TOKEN # Optional: for logging
+```
+
+6. SFT on Cotempqa example adjusting parameters
+
+```bash
+python run_sft.py \
+    --dataset_path path/to/save/dataset_iro \
+    --output_dir ./llama3_8b_chat_adapter_iro \
+    --epochs 3 \
+    --batch_size 2 \
+    --grad_accum 8 \
+    --lr 1e-4 \
+    --max_seq_len 2048 \
+    --lora_r 64 \
+    --lora_alpha 128 \
+    --disable_flash_attention # Uncomment if flash attention causes issues \
+    --disable_qlora # Uncomment to train without 4-bit quantization (needs more VRAM)
+```
