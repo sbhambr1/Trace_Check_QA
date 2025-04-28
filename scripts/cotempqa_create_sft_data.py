@@ -61,7 +61,7 @@ def create_sft_dataset(csv_path, input_col, output_col, output_dir, include_reas
 
         if include_reasoning:
             reasoning_text = str(row[reasoning_col]) if pd.notna(row[reasoning_col]) else ""
-            formatted_text = [{
+            formatted_text = {
                 "content": input_text,
                 "role": "user"
             }, {
@@ -70,20 +70,18 @@ def create_sft_dataset(csv_path, input_col, output_col, output_dir, include_reas
             }, {
                 "content": output_text,
                 "role": "assistant"
-            }]
+            }
             
         else:
-            formatted_text = [{
+            formatted_text = {
                 "content": input_text,
                 "role": "user"
             }, {
                 "content": output_text,
                 "role": "assistant"
-            }]
+            }
 
-        # SFTTrainer expects a 'messages' field containing the full formatted sequence [2][3]
-        data_list.append(formatted_text)
-
+        data_list.append(list(formatted_text))
     # Create a dataset CSV file from data_list
     dataset_csv = df.copy()
     dataset_csv["messages"] = data_list

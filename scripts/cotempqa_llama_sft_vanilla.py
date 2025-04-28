@@ -1,6 +1,7 @@
 import argparse
 import os
 import torch
+import ast
 from datasets import load_from_disk, load_dataset
 from transformers import (
     AutoModelForCausalLM,
@@ -102,8 +103,12 @@ def train_sft(
         report_to = "none" # or "tensorboard"
 
     # --- Load Dataset ---
-    # TODO: testing with sample dataset
     system_message = """You are Llama, an AI assistant created by Philipp to be helpful and honest. Your knowledge spans a wide range of topics, allowing you to engage in substantive conversations and provide analysis on complex subjects."""
+    def parse_messages_column(sample):
+        if isinstance(sample["messages"], str):
+            sample["messages"] = ast.literal_eval(sample["messages"])  # Convert string to list
+        return sample
+    
     def create_conversation(sample):
         if sample["messages"][0]["role"] == "system":
             return sample
@@ -112,16 +117,16 @@ def train_sft(
             return sample
  
     # Load dataset from the hub
-    dataset = load_dataset("HuggingFaceH4/no_robots")
+    dataset = load_dataset("sbhambr1/cotempqa_for_sft", data_files={"train": "train.csv", "test": "test.csv"})
+    
+    # Parse the "messages" column as a list
+    dataset = dataset.map(parse_messages_column, batched=False)
+
     
     # Add system message to each conversation
     columns_to_remove = list(dataset["train"].features)
     columns_to_remove.remove("messages")
     dataset = dataset.map(create_conversation, remove_columns=columns_to_remove,batched=False)
-    
-    # Filter out conversations which are corrupted with wrong turns, keep which have even number of turns after adding system message
-    dataset["train"] = dataset["train"].filter(lambda x: len(x["messages"][1:]) % 2 == 0)
-    dataset["test"] = dataset["test"].filter(lambda x: len(x["messages"][1:]) % 2 == 0)
     
     # save datasets to disk
     dataset["train"].to_json("train_dataset.json", orient="records", force_ascii=False)
@@ -137,24 +142,6 @@ def train_sft(
         data_files=os.path.join(".", "test_dataset.json"),
         split="train",
     )
-    
-    
-    # print(f"Loading dataset from {dataset_path}...")
-    # try:
-    #     dataset = load_from_disk(dataset_path)
-    #     # Optionally split if you don't have a pre-defined split
-    #     if 'train' not in dataset:
-    #         dataset = dataset.train_test_split(test_size=0.1)
-    #     print("Dataset loaded successfully.")
-    #     # Ensure the dataset has the expected 'text' field [2][3]
-    #     if "text" not in dataset["train"].column_names or "text" not in dataset["test"].column_names:
-    #          raise ValueError("Dataset must contain a 'text' column formatted for SFT.")
-    # except FileNotFoundError:
-    #     print(f"Error: Dataset directory not found at {dataset_path}")
-    #     return
-    # except Exception as e:
-    #     print(f"Error loading dataset: {e}")
-    #     return
 
     # --- Load Tokenizer ---
     print(f"Loading tokenizer for {base_model_id}...")
@@ -171,22 +158,6 @@ def train_sft(
     
     train_dataset = train_dataset.map(template_dataset, remove_columns=["messages"])
     test_dataset = test_dataset.map(template_dataset, remove_columns=["messages"])
-    
-    
-    # --- Tokenize Dataset ---
-    # def tokenize_function(examples):
-    #     return tokenizer(
-    #         examples["text"],
-    #         padding="max_length",  # Pad to max length (or use True for dynamic padding)
-    #         truncation=True,       # Truncate to the model's max input length
-    #         max_length=512,        # Set max length (adjust based on your model)
-    #         return_tensors="pt"    # Return PyTorch tensors
-    #     )
-    # # Apply tokenization to the dataset
-    # tokenized_dataset = dataset.map(tokenize_function, batched=True)
-
-    # # Remove the original "text" column if it's no longer needed
-    # tokenized_dataset = tokenized_dataset.remove_columns(["text"])
 
     # --- Configure Quantization (QLoRA) ---
     if use_qlora:
@@ -294,8 +265,6 @@ def train_sft(
     trainer.model.save_pretrained(final_adapter_path) # Saves only the adapter weights [3]
     tokenizer.save_pretrained(final_adapter_path) # Save tokenizer alongside adapter
     print(f"Training complete. Final LoRA adapter saved to {final_adapter_path}")
-    
-    destroy_process_group() # Clean up distributed process group
 
     # --- Clean up Wandb ---
     if report_to == "wandb":
