@@ -64,37 +64,37 @@ def main():
     ###############
     # Load datasets
     ###############
-    # raw_datasets = get_datasets(
-    #     data_args,
-    #     splits=data_args.dataset_splits,
-    #     configs=data_args.dataset_configs,
-    #     columns_to_keep=["messages", "chosen", "rejected", "prompt", "completion", "label"],
-    # )
-    # logger.info(
-    #     f"Training on the following datasets and their proportions: {[split + ' : ' + str(dset.num_rows) for split, dset in raw_datasets.items()]}"
-    # )
-    # column_names = list(raw_datasets["train"].features)
-    
-    def preprocess(dataset):
-        # Perform preprocessing to obtain the "messages" column
-        # Modify this function according to your specific preprocessing requirements
-        processed_dataset = dataset.map(lambda example: {"messages": example["your_column_name"]})
-        return processed_dataset
-
     raw_datasets = get_datasets(
         data_args,
         splits=data_args.dataset_splits,
         configs=data_args.dataset_configs,
-        columns_to_keep=["your_column_name"],
+        columns_to_keep=["messages", "chosen", "rejected", "prompt", "completion", "label"],
     )
-
-    # Preprocess the dataset to obtain the "messages" column
-    preprocessed_datasets = {split: preprocess(dataset) for split, dataset in raw_datasets.items()}
-
     logger.info(
-        f"Training on the following datasets and their proportions: {[split + ' : ' + str(dset.num_rows) for split, dset in preprocessed_datasets.items()]}"
+        f"Training on the following datasets and their proportions: {[split + ' : ' + str(dset.num_rows) for split, dset in raw_datasets.items()]}"
     )
-    column_names = list(preprocessed_datasets["train"].features)
+    column_names = list(raw_datasets["train"].features)
+    
+    # def preprocess(dataset):
+    #     # Perform preprocessing to obtain the "messages" column
+    #     # Modify this function according to your specific preprocessing requirements
+    #     processed_dataset = dataset.map(lambda example: {"messages": example["your_column_name"]})
+    #     return processed_dataset
+
+    # raw_datasets = get_datasets(
+    #     data_args,
+    #     splits=data_args.dataset_splits,
+    #     configs=data_args.dataset_configs,
+    #     columns_to_keep=["your_column_name"],
+    # )
+
+    # # Preprocess the dataset to obtain the "messages" column
+    # preprocessed_datasets = {split: preprocess(dataset) for split, dataset in raw_datasets.items()}
+
+    # logger.info(
+    #     f"Training on the following datasets and their proportions: {[split + ' : ' + str(dset.num_rows) for split, dset in preprocessed_datasets.items()]}"
+    # )
+    # column_names = list(preprocessed_datasets["train"].features)
 
     ################
     # Load tokenizer
