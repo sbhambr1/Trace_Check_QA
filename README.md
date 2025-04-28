@@ -5,7 +5,11 @@
 ```bash
 # Clone the repository
 conda create -n temporal python=3.10
+cd temporal_llms
 pip install -r requirements.txt
+cd ./alignment-handbook/
+python -m pip install .
+cd ..
 ```
 
 ## Usage
