@@ -4,6 +4,7 @@ from datasets import Dataset
 import os
 import sys
 import warnings
+from datasets import Dataset
 
 warnings.filterwarnings("ignore")
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -89,6 +90,16 @@ def create_sft_dataset(csv_path, input_col, output_col, output_dir, include_reas
         print(f"Dataset successfully saved to {output_dir}")
     except Exception as e:
         print(f"Error saving dataset: {e}")
+        
+    return hf_dataset
+
+def push_data_to_hf(dataset, dataset_name, hf_username, hf_token):
+    dataset.push_to_hub(
+        dataset_name,
+        use_auth_token=hf_token,
+        organization=hf_username,
+        private=True
+    )
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Create a Hugging Face dataset for SFT from a CSV file.")
@@ -101,7 +112,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    create_sft_dataset(
+    hf_dataset = create_sft_dataset(
         csv_path=args.csv_path,
         input_col=args.input_col,
         output_col=args.output_col,
@@ -109,4 +120,10 @@ if __name__ == "__main__":
         include_reasoning=args.include_reasoning,
         reasoning_col=args.reasoning_col
     )
+    
+    # dataset_name = "cotempqa_for_sft"
+    # hf_username = "your_hf_username"
+    # hf_token = "your_hf_token"
+
+    # push_data_to_hf(dataset, dataset_name, hf_username, hf_token)
 
