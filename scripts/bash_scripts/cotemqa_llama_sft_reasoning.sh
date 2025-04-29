@@ -10,6 +10,8 @@
 eval "$(conda shell.bash hook)"
 conda activate temporal
 
+conda install -c conda-forge cudatoolkit-dev -y
+
 cd /home/sbhambr1/research/temporal_llms/temporal_llms/
 
 wandb_token=$WANDB_API_KEY
