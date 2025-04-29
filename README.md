@@ -88,7 +88,7 @@ python create_sft_dataset.py \
 
 ```bash
 python scripts/cotempqa_llama_sft_vanilla.py \
-    --dataset_path data/cotempqa/sft_dataset \
+    --expt_name llama3.1-8b-sft-cotempqa \
     --model_id meta-llama/Meta-Llama-3.1-8B \
     --output_dir models/llama3-8b-sft-adapter \
     # --hf_token YOUR_HF_TOKEN  # Optional: if needed for model download or push
@@ -99,7 +99,7 @@ python scripts/cotempqa_llama_sft_vanilla.py \
 
 ```bash
 python scripts/cotempqa_llama_sft_reasoning.py \
-    --dataset_path data/cotempqa/sft_dataset \
+    --expt_name llama3.1-8b-sft-cotempqa-with_reasoning \
     --model_id meta-llama/Meta-Llama-3.1-8B \
     --output_dir models/llama3-8b-sft-adapter_reasoning \
     # --hf_token YOUR_HF_TOKEN  # Optional: if needed for model download or push

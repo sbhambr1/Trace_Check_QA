@@ -33,7 +33,7 @@ LLAMA_3_CHAT_TEMPLATE = (
 )
 
 def train_sft(
-    dataset_path: str,
+    expt_name: str = "llama3.1-8b-sft-cotempqa-with_reasoning",
     base_model_id: str = "meta-llama/Meta-Llama-3.1-8B", # Specify the base Llama 3.1 8B model [2]
     output_dir: str = "./llama3-8b-sft-adapter",
     hf_token: str = None, # Optional: For gated models or pushing to Hub
@@ -59,7 +59,7 @@ def train_sft(
     Performs Supervised Fine-Tuning (SFT) on a Llama 3.1 model using QLoRA.
 
     Args:
-        dataset_path (str): Path to the pre-processed dataset directory saved by the previous script.
+        expt_name (str): Experiment name for saving logs.
         base_model_id (str): Hugging Face model ID for the base Llama 3.1 model.
         output_dir (str): Directory to save the trained LoRA adapter and checkpoints.
         hf_token (str, optional): Hugging Face API token.
@@ -90,10 +90,11 @@ def train_sft(
         print("Logging into Weights & Biases...")
         try:
             wandb.login(key=wandb_token)
-            run_id = f"sft-{base_model_id.split('/')[-1]}"
+            # Initialize wandb run
             run = wandb.init(
                 entity="wordle",
-                project="TemporalQA"
+                project="TemporalQA",
+                name=expt_name,
             )
             report_to = "wandb"
         except Exception as e:
@@ -291,7 +292,7 @@ def train_sft(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Fine-tune a Llama 3.1 model using SFTTrainer and QLoRA.")
-    parser.add_argument("--dataset_path", type=str, required=True, help="Path to the saved dataset directory.")
+    parser.add_argument("--expt_name", type=str, default="llama3.1-8b-sft-cotempqa-with_reasoning", help="Experiment name for saving logs.")
     parser.add_argument("--model_id", type=str, default="meta-llama/Meta-Llama-3.1-8B", help="Base model ID from Hugging Face Hub.")
     parser.add_argument("--output_dir", type=str, default="./llama3-8b-sft-adapter", help="Directory to save the adapter.")
     parser.add_argument("--hf_token", type=str, default=None, help="Hugging Face Hub token (optional).")
@@ -309,7 +310,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     train_sft(
-        dataset_path=args.dataset_path,
+        expt_name=args.expt_name,
         base_model_id=args.model_id,
         output_dir=args.output_dir,
         hf_token=args.hf_token,
