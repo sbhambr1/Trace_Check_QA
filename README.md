@@ -12,6 +12,12 @@ python -m pip install .
 cd ..
 ```
 
+### Additional step if CUDA Toolkit is missing
+
+```bash
+conda install -c conda-forge cudatoolkit-dev -y
+```
+
 ## Usage
 
 1. Run inference on CotempQA dataset:
@@ -52,7 +58,7 @@ python create_sft_dataset.py \
     --output_dir data/cotempqa/sft_dataset
 ```
 
-4. Create SFT dataset for CotempQA with Input/Reasoning/Output format (ensure CSV is formatted correctly):
+4. Create SFT dataset for CotempQA with Input/Output format (ensure CSV is formatted correctly):
 
 ```bash
 # example
@@ -61,21 +67,46 @@ python create_sft_dataset.py \
     --input_col question \
     --output_col answer \
     --output_dir data/cotempqa/sft_dataset \
+```
+
+5. Create SFT dataset for CotempQA with Input/Reasoning/Output format (ensure CSV is formatted correctly):
+
+```bash
+# example
+python create_sft_dataset.py \
+    --csv_path data/cotempqa/dataset_with_labels.csv \
+    --input_col question \
+    --output_col answer \
+    --output_dir data/cotempqa/sft_dataset_with_reasoning \
     --include_reasoning \
     --reasoning_col label
 ```
 
-5. SFT on Cotempqa example using default settings with QLoRA for the dataset saved in 'path/to/save/dataset_io'
+### Push models to Huggingface and load that dataset in the SFT scripts accordingly.
+
+5. SFT on Cotempqa example using default settings with QLoRA for the CotempQA SFT dataset (input/output)
 
 ```bash
-python run_sft.py \
-    --dataset_path path/to/save/dataset_io \
-    --output_dir ./llama3_8b_chat_adapter_io \
+python scripts/cotempqa_llama_sft_vanilla.py \
+    --dataset_path data/cotempqa/sft_dataset \
+    --model_id meta-llama/Meta-Llama-3.1-8B \
+    --output_dir models/llama3-8b-sft-adapter \
     # --hf_token YOUR_HF_TOKEN  # Optional: if needed for model download or push
     # --wandb_token YOUR_WANDB_TOKEN # Optional: for logging
 ```
 
-6. SFT on Cotempqa example adjusting parameters
+6. SFT on Cotempqa example using default settings with QLoRA for the CotempQA SFT dataset (input/output)
+
+```bash
+python scripts/cotempqa_llama_sft_reasoning.py \
+    --dataset_path data/cotempqa/sft_dataset \
+    --model_id meta-llama/Meta-Llama-3.1-8B \
+    --output_dir models/llama3-8b-sft-adapter_reasoning \
+    # --hf_token YOUR_HF_TOKEN  # Optional: if needed for model download or push
+    # --wandb_token YOUR_WANDB_TOKEN # Optional: for logging
+```
+
+<!-- 6. SFT on Cotempqa example adjusting parameters
 
 ```bash
 python run_sft.py \
@@ -90,4 +121,4 @@ python run_sft.py \
     --lora_alpha 128 \
     --disable_flash_attention # Uncomment if flash attention causes issues \
     --disable_qlora # Uncomment to train without 4-bit quantization (needs more VRAM)
-```
+``` -->

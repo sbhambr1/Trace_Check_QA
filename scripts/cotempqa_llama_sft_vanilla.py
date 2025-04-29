@@ -90,10 +90,10 @@ def train_sft(
         print("Logging into Weights & Biases...")
         try:
             wandb.login(key=wandb_token)
+            run_id = f"sft-{base_model_id.split('/')[-1]}"
             run = wandb.init(
-                project=f"sft-{base_model_id.split('/')[-1]}",
-                job_type="training",
-                anonymous="allow"
+                entity="wordle",
+                project="TemporalQA"
             )
             report_to = "wandb"
         except Exception as e:
