@@ -65,10 +65,7 @@ def create_sft_dataset(csv_path, input_col, output_col, output_dir, include_reas
                 "content": input_text,
                 "role": "user"
             }, {
-                "content": reasoning_text,
-                "role": "assistant"
-            }, {
-                "content": output_text,
+                "content": "<think>" + reasoning_text + "</think>" + " " + "<answer>" + output_text + "</answer>",
                 "role": "assistant"
             }
             
