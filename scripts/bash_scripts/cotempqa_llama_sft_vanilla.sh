@@ -1,16 +1,16 @@
 #!/bin/bash
 
-# SBATCH -c 1     # number of TASKS
-# SBATCH -N 1     # keep all tasks on the same node
-# SBATCH --mem=100G     # request 120 GB of memory
-# SBATCH -p general
-# SBATCH --gres=gpu:a100:1
-# SBATCH -t 0-01:30:00 
+SBATCH -c 1     # number of TASKS
+SBATCH -N 1     # keep all tasks on the same node
+SBATCH --mem=100G     # request 120 GB of memory
+SBATCH -p general
+SBATCH --gres=gpu:a100:1
+SBATCH -t 0-01:30:00 
+
+conda install -c conda-forge cudatoolkit-dev -y
 
 eval "$(conda shell.bash hook)"
 conda activate temporal
-
-conda install -c conda-forge cudatoolkit-dev -y
 
 cd /home/sbhambr1/research/temporal_llms/temporal_llms/
 
