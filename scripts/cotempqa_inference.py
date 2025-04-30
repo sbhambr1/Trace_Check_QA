@@ -18,7 +18,7 @@ def evaluate_cotemporal(model_name, data_path, mode, output_dir, evaluate_result
     Parameters:
     model_name (str): Name of the model to evaluate.
     data_path (str): Path to the input dataset.
-    mode (str): Evaluation mode (e.g., 'default', 'few_shot', 'few_shot_cot', 'few_shot_math_cot').
+    mode (str): Evaluation mode (e.g., 'default', 'few_shot', 'few_shot_cot', 'few_shot_math_cot', 'default_with_trace').
     output_dir (str): Directory to save the evaluation outputs.
     evaluate_result_dir (str): Directory to save the evaluation results.
     """
@@ -37,6 +37,8 @@ def evaluate_cotemporal(model_name, data_path, mode, output_dir, evaluate_result
         all_prompts = get_prompts(all_data, few_shot_cot_template)
     elif mode == 'few_shot_math_cot':
         all_prompts = get_prompts(all_data, few_shot_math_template)
+    elif mode == 'default_with_trace':
+        all_prompts = get_prompts_with_trace(all_data, default_template_with_trace)
         
     if model_name == 'gpt': # currently "gpt-3.5-turbo-1106"
         filename = os.path.basename(data_path)
