@@ -3,3 +3,6 @@ models/
 *.arrow
 *.log
 wandb*
+*.pyc
+results/Cotempqa/evaluation_outputs/
+.gitignore
