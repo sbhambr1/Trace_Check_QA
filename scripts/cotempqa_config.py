@@ -11,6 +11,8 @@ import re
 
 default_template = 'Answer the question based on the context:\n{fact}\nQuestion: {question} Only return the answer.\n'
 
+default_template_with_trace = '''Answer the question based on the context:\n{fact}\nQuestion: {question}\n<think> {reasoning_trace} </think>\n  Only return the answer.\n'''
+
 few_shot_template = '''Answer the question based on the context:\nValdis Dombrovskis holds the position of Vice-President of the European Commission in December 1, 2019.\nValdis Dombrovskis holds the position of European Commissioner for Internal Market and Services from July 16, 2016 to October 12, 2020.\nValdis Dombrovskis holds the position of European Commissioner for Trade in August 26, 2020.\nValdis Dombrovskis holds the position of European Commissioner for An Economy that Works for People in December 1, 2019.\nValdis Dombrovskis holds the position of Prime Minister of Latvia from March 12, 2009 to January 22, 2014.\nValdis Dombrovskis holds the position of Minister of Finance from November 7, 2002 to March 9, 2004.\nQuestion: While Valdis Dombrovskis was holding the position of European Commissioner for Trade, which position did Valdis Dombrovskis during the identical time period?\nOnly return the answer.
 European Commissioner for Internal Market and Services
 Answer the question based on the context:\nKamari Maxine Clarke works for Yale University from 1999 to 2012.\nKamari Maxine Clarke attended Yale Law School in 2003.\nKamari Maxine Clarke works for Carleton University from 2015 to 2019.\nKamari Maxine Clarke works for University of Pennsylvania from 2012 to 2015.\nKamari Maxine Clarke attended University of California, Santa Cruz in 1997.\nQuestion: While Kamari Maxine Clarke attended Yale Law School, which employer did Kamari Maxine Clarke work for during the identical time period?\nOnly return the answer.
@@ -67,6 +69,29 @@ def get_prompts(all_inputs, template):
         )
         all_outputs.append(output)
     return all_outputs
+
+def get_prompts_with_trace(all_inputs, template):
+    """
+    Generate prompts from the input data using the provided template.
+    
+    Parameters:
+    all_inputs (list): List of input data dictionaries.
+    template (str): Template string for formatting the prompts.
+    
+    Returns:
+    list: List of formatted prompts.
+    """
+    all_outputs = []
+    for input in all_inputs:
+        fact_str = "\n".join(input['facts'])
+        output = template.format(
+            fact=fact_str,
+            question=input['question'],
+            reasoning_trace=input['reasoning_trace']
+        )
+        all_outputs.append(output)
+    return all_outputs
+
 
 def chatgpt(out_f, prompt, item_data, index, api_list):
     """

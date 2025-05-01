@@ -4,3 +4,6 @@ models/
 *.log
 wandb*
 slurm*
+*.pyc
+results/Cotempqa/evaluation_outputs/
+.gitignore

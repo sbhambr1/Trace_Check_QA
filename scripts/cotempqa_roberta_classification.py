@@ -4,6 +4,7 @@ import torch
 import numpy as np
 from tqdm import tqdm
 from datasets import load_dataset
+import time
 from torch.utils.data import DataLoader, Dataset
 from argparse import ArgumentParser
 from transformers import RobertaForSequenceClassification, RobertaTokenizer, DataCollatorWithPadding, get_scheduler
@@ -157,7 +158,6 @@ def validate(dataloader, device, model):
          
 def test(dataloader, device, model):
     model.eval()
-    test_loss = 0.0
     test_accuracy = 0.0
     test_preds = []
     test_labels = []
@@ -238,21 +238,29 @@ def main(cuda_device, num_labels, max_len, batch_size, num_epochs, model_name, l
         "learning_rate": lr,
         "max_length": max_len,
         "num_labels": num_labels,
-        'optimizer': "Adam",
-        criterion: "CrossEntropyLoss",
+        "optimizer": "Adam",
+        "criterion": "CrossEntropyLoss",
     }
     
-    model_save_name = "cotempqa_" + model_name + f"_batch_{batch_size}_epochs_{num_epochs}_lr_{lr}"
+    model_save_name = "cotempqa/" + model_name.replace("/", "_") + "/" + time.strftime("%Y%m%d-%H%M%S")
+    
     path = os.path.join(storage_dir, model_save_name)
+    if not os.path.exists(path):
+        os.makedirs(path)
+    
     metrics_save_path = os.path.join(path, "metrics.json")
-    with open(metrics_save_path + 'logging.json', 'w') as f:
+    with open(metrics_save_path, 'w') as f:
         json.dump({
             "training_config": training_config,
             "train": train_metrics,
             "valid": valid_metrics,
             "test": test_metrics
         }, f, indent=4)
+    
+    # Save the model
     model.save_pretrained(path)
+    
+    print("Model saved to:", path)
     
 if __name__ == '__main__':  
     
@@ -274,7 +282,7 @@ if __name__ == '__main__':
     if not os.path.exists(args.storage_dir):
         os.makedirs(args.storage_dir)
     
-    main(args.cuda_device, args.num_labels, args.max_len, args.batch_size, args.num_epochs, args.model_name, args.lr, args.storage_dir, dataset_path)
+    main(args.device, args.num_labels, args.max_len, args.batch_size, args.num_epochs, args.model_name, args.lr, args.storage_dir, dataset_path)
     
     
     
