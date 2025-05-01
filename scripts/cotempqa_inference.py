@@ -6,6 +6,10 @@ import os
 import sys
 from vllm import LLM, SamplingParams
 import warnings
+from rich import print as rich_print
+import builtins
+
+builtins.print = rich_print
 
 warnings.filterwarnings("ignore")
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -37,7 +41,7 @@ def evaluate_cotemporal(model_name, data_path, mode, output_dir, evaluate_result
         all_prompts = get_prompts(all_data, few_shot_cot_template)
     elif mode == 'few_shot_math_cot':
         all_prompts = get_prompts(all_data, few_shot_math_template)
-    elif mode == 'default_with_trace':
+    elif mode == 'default_with_reasoning':
         all_prompts = get_prompts_with_trace(all_data, default_template_with_trace)
         
     if model_name == 'gpt': # currently "gpt-3.5-turbo-1106"

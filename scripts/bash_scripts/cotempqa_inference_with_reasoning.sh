@@ -17,8 +17,9 @@ conda activate temporal
 model_name=$1
 device=$2
 
-data_types=("mix" "equal" "during" "overlap")
-modes=("default" "few_shot_cot" "few_shot")
+data_types=("mix_with_reasoning" "equal_with_reasoning" "during_with_reasoning" "overlap_with_reasoning")
+modes=("default_with_reasoning")
+with_reasoning="true"
 
 for data_type in "${data_types[@]}"; do
     for mode in "${modes[@]}"; do
