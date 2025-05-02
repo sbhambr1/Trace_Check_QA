@@ -18,10 +18,11 @@ torch.cuda.empty_cache()
 
 def evaluate_cotemporal_sft_model(
     base_model_id: str = "meta-llama/Meta-Llama-3.1-8B", # Specify the base Llama 3.1 8B model [2]
-    output_dir: str = "./llama3-8b-sft-adapter",
-    data_path: str = "./data/cotempqa_test.jsonl",
+    adapter_path: str = "llama3-8b-sft-adapter",
+    data_path: str = "./data/cotempqa/mix.json",
     mode: str = "few_shot_cot",
-    evaluate_result_dir: str = "./cotempqa_test_results",
+    output_dir: str = "results/Cotempqa/evaluation_outputs/mix_few_shot_cot/",
+    evaluate_result_dir: str = "results/Cotempqa/evaluation_results/mix_few_shot_cot/",
 ):
     all_data = []
     data_path = os.path.join(os.getcwd() + '/', data_path)
@@ -38,6 +39,8 @@ def evaluate_cotemporal_sft_model(
         all_prompts = get_prompts(all_data, few_shot_cot_template)
     elif mode == 'few_shot_math_cot':
         all_prompts = get_prompts(all_data, few_shot_math_template)
+    elif mode == 'default_with_reasoning':
+        all_prompts = get_prompts_with_trace(all_data, default_template_with_trace)
         
     print(f"Loading tokenizer for {base_model_id}...")
     tokenizer = AutoTokenizer.from_pretrained(base_model_id, trust_remote_code=True)
@@ -46,7 +49,7 @@ def evaluate_cotemporal_sft_model(
         tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "right"
         
-    final_adapter_path = os.path.join(output_dir, "final_adapter")
+    final_adapter_path = os.path.join("models/" + adapter_path, "final_adapter")
     print("Merging adapter with base model...")
     base_model_reload = AutoModelForCausalLM.from_pretrained(
         base_model_id,
@@ -80,7 +83,8 @@ def evaluate_cotemporal_sft_model(
     output_dir = os.path.join(os.getcwd() + '/', output_dir)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-    sanitized_model_name = base_model_id.replace("/", "_")
+    
+    sanitized_model_name = adapter_path
     output_path = os.path.join(output_dir, f"{sanitized_model_name}_{mode}_{filename}")
     
     with open(output_path, 'w', encoding='utf-8') as f:
@@ -103,12 +107,13 @@ def evaluate_cotemporal_sft_model(
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate the Cotemporal SFT model.")
-    parser.add_argument("--base_model_id", type=str, default="meta-llama/Meta-Llama-3.1-8B", help="Base model ID.")
-    parser.add_argument("--output_dir", type=str, default="./llama3-8b-sft-adapter", help="Output directory.")
-    parser.add_argument("--data_path", type=str, default="./data/cotempqa_test.jsonl", help="Path to the dataset file.")
+    parser.add_argument("--model_name", type=str, default="meta-llama/Meta-Llama-3.1-8B", help="Base model ID.")
+    parser.add_argument("--adapter_path", type=str, default="Meta-Llama-3.1-8B-sft-adapter", help="SFT model adapter dir path.")
+    parser.add_argument("--data_path", type=str, default="data/cotempqa/mix.json", help="Path to the dataset file.")
     parser.add_argument("--mode", type=str, default="few_shot_cot", help="Mode for evaluation.")
-    parser.add_argument("--evaluate_result_dir", type=str, default="./cotempqa_test_results", help="Path to save the evaluation result.")
+    parser.add_argument("--output_dir", type=str, default="results/Cotempqa/evaluation_outputs/mix_few_shot_cot/", help="Output directory.")
+    parser.add_argument("--evaluate_result_dir", type=str, default="results/Cotempqa/evaluation_results/mix_few_shot_cot/", help="Path to save the evaluation result.")
     
     args = parser.parse_args()
     
-    evaluate_cotemporal_sft_model(args.base_model_id, args.output_dir, args.data_path, args.mode, args.evaluate_result_dir)
+    evaluate_cotemporal_sft_model(args.model_name, args.adapter_path, args.data_path, args.mode, args.output_dir, args.evaluate_result_dir)

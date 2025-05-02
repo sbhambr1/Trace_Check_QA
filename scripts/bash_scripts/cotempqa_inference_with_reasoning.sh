@@ -19,7 +19,6 @@ device=$2
 
 data_types=("mix_with_reasoning" "equal_with_reasoning" "during_with_reasoning" "overlap_with_reasoning")
 modes=("default_with_reasoning")
-with_reasoning="true"
 
 for data_type in "${data_types[@]}"; do
     for mode in "${modes[@]}"; do

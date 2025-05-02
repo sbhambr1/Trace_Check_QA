@@ -16,16 +16,11 @@ conda activate temporal
 
 # model_id: meta-llama/Llama-3.2-1B-Instruct ; meta-llama/Llama-3.2-3B-Instruct ; meta-llama/Llama-3.1-8B-Instruct ; mistralai/Mistral-7B-Instruct-v0.3 ; google/gemma-3-1b-it ; Qwen/Qwen3-4B ; Qwen/Qwen3-1.7B ; Qwen/Qwen3-8B
 
-# data_types=("mix" "equal" "during" "overlap")
-# modes=("default" "few_shot_cot" "few_shot" "default_with_trace")
-data_types=("mix")
-modes=("default")
-with_reasoning="false"
 
-# if [ "$with_reasoning" = "true" ]; then
-#     data_types+=("_with_reasoning")
-#     modes=("default_with_reasoning")
-# fi
+# data_types=("mix_with_reasoning" "equal_with_reasoning" "during_with_reasoning" "overlap_with_reasoning")
+modes=("default_with_reasoning")
+data_types=("mix_with_reasoning")
+
 
 model_id=$1
 model_name="${model_id#*/}"
