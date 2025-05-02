@@ -255,7 +255,6 @@ def evaluate_model(all_data, mode):
         elif 'answer:' in prediction:
             prediction = prediction.split('answer:')[1]
 
-
         facts = data['facts']
         question = data['question'].lower()
 
