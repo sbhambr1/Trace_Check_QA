@@ -4,6 +4,7 @@ import json
 import torch
 import argparse
 import warnings
+import pandas as pd
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -30,6 +31,20 @@ def evaluate_cotemporal_sft_model(
         for line in f:
             data = json.loads(line)
             all_data.append(data)
+            
+    # Load test samples from test.csv
+    test_csv_path = os.path.join(os.getcwd() + '/data/cotempqa/sft_dataset_chat_template/test.csv')
+    test_samples = []
+    test_df = pd.read_csv(test_csv_path)
+    for _, row in test_df.iterrows():
+        test_samples.append(row['question'])
+            
+    # Filter out test samples from all_data
+    test_data = []
+    test_questions = set(test_samples)
+    test_data = [data for data in all_data if any(data['question'] in question for question in test_questions)]
+    
+    all_data = test_data
 
     if mode == 'default':
         all_prompts = get_prompts(all_data, default_template)
@@ -65,7 +80,7 @@ def evaluate_cotemporal_sft_model(
         inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
         with torch.no_grad():
             output = merged_model.generate(**inputs, max_new_tokens=50)
-        all_outputs.append(tokenizer.decode(output[0], skip_special_tokens=True))
+        all_outputs.append(tokenizer.decode(output[0][inputs.input_ids.shape[-1]:], skip_special_tokens=True))
         
     output_data = []
     for prompt, input_data, output in zip(all_prompts, all_data, all_outputs):
