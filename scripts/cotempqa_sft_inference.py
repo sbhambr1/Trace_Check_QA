@@ -79,7 +79,7 @@ def evaluate_cotemporal_sft_model(
     for prompt in all_prompts:
         inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
         with torch.no_grad():
-            output = merged_model.generate(**inputs, max_new_tokens=50)
+            output = merged_model.generate(**inputs, max_new_tokens=500)
         all_outputs.append(tokenizer.decode(output[0][inputs.input_ids.shape[-1]:], skip_special_tokens=True))
         
     output_data = []

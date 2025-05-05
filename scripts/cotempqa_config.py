@@ -254,6 +254,8 @@ def evaluate_model(all_data, mode):
         # Adding for SFT models, need to check for other models in prompting
         elif 'answer:' in prediction:
             prediction = prediction.split('answer:')[1]
+        elif '<answer>' in prediction:
+            prediction = prediction.split('<answer>')[1]
 
         facts = data['facts']
         question = data['question'].lower()
