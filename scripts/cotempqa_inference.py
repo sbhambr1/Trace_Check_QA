@@ -60,7 +60,7 @@ def evaluate_cotemporal(model_name, data_path, mode, output_dir, evaluate_result
         result = evaluate_gpt(output_data)
     else:
         llm = LLM(model=model_name, tensor_parallel_size=1, dtype="float16")
-        sampling_params = SamplingParams(temperature=0, max_tokens=50)
+        sampling_params = SamplingParams(temperature=0, max_tokens=500) # use 500 for reasoning models
         all_outputs = llm.generate(all_prompts, sampling_params)
         all_outputs = [output.outputs[0].text for output in all_outputs]
         

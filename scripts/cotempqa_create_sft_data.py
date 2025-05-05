@@ -1,10 +1,9 @@
-import argparse
-import pandas as pd
-from datasets import Dataset
 import os
 import sys
 import warnings
-from datasets import Dataset
+import argparse
+import pandas as pd
+
 
 warnings.filterwarnings("ignore")
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -84,12 +83,40 @@ def create_sft_dataset(csv_path, input_col, output_col, output_dir, include_reas
     dataset_csv["messages"] = data_list
     dataset_csv_path = os.path.join(output_dir, "formatted_dataset.csv")
     dataset_csv.to_csv(dataset_csv_path, index=False)
-    train_csv = dataset_csv.sample(frac=0.8, random_state=42)
-    test_csv = dataset_csv.drop(train_csv.index)
-    train_csv.to_csv(os.path.join(output_dir, "train.csv"), index=False)
-    test_csv.to_csv(os.path.join(output_dir, "test.csv"), index=False)
     
     print(f"Created dataset with {len(dataset_csv)} examples.")
+    
+    categories = ['overlap', 'during', 'mix', 'equal']
+    for category in categories:
+        category_train_csv = dataset_csv[dataset_csv["reasoning"].str.contains(category, case=False)]
+        category_test_csv = category_train_csv.sample(frac=0.2, random_state=42)
+        category_train_csv = category_train_csv.drop(category_test_csv.index)
+        
+        category_train_csv.to_csv(os.path.join(output_dir, f"{category}_train.csv"), index=False)
+        category_test_csv.to_csv(os.path.join(output_dir, f"{category}_test.csv"), index=False)
+        
+def merge_category_csvs(output_dir):
+    categories = ['overlap', 'during', 'mix', 'equal']
+    train_csvs = []
+    test_csvs = []
+
+    for category in categories:
+        train_csv_path = os.path.join(output_dir, f"{category}_train.csv")
+        test_csv_path = os.path.join(output_dir, f"{category}_test.csv")
+
+        train_csv = pd.read_csv(train_csv_path)
+        test_csv = pd.read_csv(test_csv_path)
+
+        train_csvs.append(train_csv)
+        test_csvs.append(test_csv)
+
+    merged_train_csv = pd.concat(train_csvs)
+    merged_test_csv = pd.concat(test_csvs)
+
+    merged_train_csv.to_csv(os.path.join(output_dir, "merged_train.csv"), index=False)
+    merged_test_csv.to_csv(os.path.join(output_dir, "merged_test.csv"), index=False)
+
+    print("Merged train and test CSV files.")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Create a Hugging Face dataset for SFT from a CSV file.")
@@ -111,4 +138,7 @@ if __name__ == "__main__":
         reasoning_col=args.reasoning_col
     )
 
+    merge_category_csvs(args.output_dir)
 
+
+    
