@@ -17,21 +17,6 @@ import wandb # Optional, for tracking
     
 torch.cuda.empty_cache()
 
-# LLAMA_3_CHAT_TEMPLATE = (
-#     "{% for message in messages %}"
-#         "{% if message['role'] == 'system' %}"
-#             "{{ message['content'] }}"
-#         "{% elif message['role'] == 'user' %}"
-#             "{{ '\n\nHuman: ' + message['content'] +  eos_token }}"
-#         "{% elif message['role'] == 'assistant' %}"
-#             "{{ '\n\nAssistant: '  + message['content'] +  eos_token  }}"
-#         "{% endif %}"
-#     "{% endfor %}"
-#     "{% if add_generation_prompt %}"
-#     "{{ '\n\nAssistant: ' }}"
-#     "{% endif %}"
-# )
-
 def train_sft(
     expt_name: str, # Experiment name for logging
     base_model_id: str = "meta-llama/Meta-Llama-3.1-8B", # Specify the base Llama 3.1 8B model [2]
@@ -149,7 +134,7 @@ def train_sft(
     # Llama 3 doesn't have a default pad token, set it to eos_token
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
-    tokenizer.padding_side = "right" # Ensure padding is on the right for causal LMs
+    tokenizer.padding_side = "left" # Ensure padding is on the right for causal LMs
     # tokenizer.chat_template = LLAMA_3_CHAT_TEMPLATE # Set the chat template for Llama 3.1 [2]
     
     # template dataset
@@ -211,7 +196,7 @@ def train_sft(
     # --- Configure Training Arguments ---
     print("Setting up training arguments...")
     training_args = TrainingArguments(
-        output_dir=output_dir,
+        output_dir="models/"+output_dir,
         per_device_train_batch_size=batch_size,
         per_device_eval_batch_size=batch_size,
         gradient_accumulation_steps=gradient_accumulation_steps,
