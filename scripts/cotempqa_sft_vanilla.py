@@ -134,7 +134,7 @@ def train_sft(
     # Llama 3 doesn't have a default pad token, set it to eos_token
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
-    tokenizer.padding_side = "right" # Ensure padding is on the right for causal LMs
+    tokenizer.padding_side = "left" # Ensure padding is on the right for causal LMs
     # tokenizer.chat_template = LLAMA_3_CHAT_TEMPLATE # Set the chat template for Llama 3.1 [2]
     
     # template dataset
