@@ -23,6 +23,7 @@ with_reasoning="False"
 
 model_id=$1
 with_reasoning=$2
+with_reasoning_facts=$3
 model_name="${model_id#*/}"
 
 added_name=""
@@ -31,6 +32,11 @@ adapter_name=""
 if [ "$with_reasoning" = "True" ]; then
     added_name="with_reasoning/"
     adapter_name="-reasoning"
+fi
+
+if [ "$with_reasoning_facts" = "True" ]; then
+    added_name="with_reasoning_facts/"
+    adapter_name="-reasoning-facts"
 fi
 
 for data_type in "${data_types[@]}"; do

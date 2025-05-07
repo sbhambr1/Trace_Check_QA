@@ -82,28 +82,37 @@ python create_sft_dataset.py \
     --reasoning_col label
 ```
 
-### Push models to Huggingface and load that dataset in the SFT scripts accordingly.
+### Pushed data to Huggingface and loading that dataset in the SFT scripts accordingly. Make data public later on.
 
 5. SFT on Cotempqa example using default settings with QLoRA for the CotempQA SFT dataset (input/output)
 
 ```bash
-python scripts/cotempqa_llama_sft_vanilla.py \
-    --expt_name llama3.1-8b-sft-cotempqa \
-    --model_id meta-llama/Meta-Llama-3.1-8B \
-    --output_dir models/llama3-8b-sft-adapter \
-    # --hf_token YOUR_HF_TOKEN  # Optional: if needed for model download or push
-    # --wandb_token YOUR_WANDB_TOKEN # Optional: for logging
+sbatch ./scripts/bash_scripts/cotempqa_sft_vanilla.sh "meta-llama/Llama-3.2-1B-Instruct"
 ```
 
-6. SFT on Cotempqa example using default settings with QLoRA for the CotempQA SFT dataset (input/output)
+6. SFT on Cotempqa example using default settings with QLoRA for the CotempQA SFT dataset with Temporal Relation in reasoning trace (input/reasoning + output) (gold labels)
 
 ```bash
-python scripts/cotempqa_llama_sft_reasoning.py \
-    --expt_name llama3.1-8b-sft-cotempqa-with_reasoning \
-    --model_id meta-llama/Meta-Llama-3.1-8B \
-    --output_dir models/llama3-8b-sft-adapter_reasoning \
-    # --hf_token YOUR_HF_TOKEN  # Optional: if needed for model download or push
-    # --wandb_token YOUR_WANDB_TOKEN # Optional: for logging
+sbatch ./scripts/bash_scripts/cotempqa_sft_reasoning.sh "meta-llama/Llama-3.2-1B-Instruct"
+```
+
+7. SFT on Cotempqa example using default settings with QLoRA for the CotempQA SFT dataset with Temporal Relation and Facts in reasoning trace (input/reasoning + output) (gold labels + facts)
+
+```bash
+sbatch ./scripts/bash_scripts/cotempqa_sft_reasoning_facts.sh "meta-llama/Llama-3.2-1B-Instruct"
+```
+
+8. Inference
+
+```bash
+# for SFT models without any reasoning trace
+sbatch ./scripts/bash_scripts/cotempqa_sft_inference.sh "meta-llama/Llama-3.2-1B-Instruct" False False
+
+# for SFT models with reasoning trace with only temporal relation
+sbatch ./scripts/bash_scripts/cotempqa_sft_inference.sh "meta-llama/Llama-3.2-1B-Instruct" True False
+
+# for SFT models with reasoning trace with only temporal relation
+sbatch ./scripts/bash_scripts/cotempqa_sft_inference.sh "meta-llama/Llama-3.2-1B-Instruct" True True
 ```
 
 <!-- 6. SFT on Cotempqa example adjusting parameters
