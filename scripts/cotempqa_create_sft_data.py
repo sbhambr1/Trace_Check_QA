@@ -1,5 +1,6 @@
 import os
 import sys
+import ast
 import warnings
 import argparse
 import pandas as pd
@@ -8,7 +9,7 @@ import pandas as pd
 warnings.filterwarnings("ignore")
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-def create_sft_dataset(csv_path, input_col, output_col, output_dir, include_reasoning=False, reasoning_col=None):
+def create_sft_dataset(csv_path, input_col, output_col, output_dir, include_reasoning=False, reasoning_col=None, include_facts=False, facts_col=None):
     """
     Creates a Hugging Face dataset CSV from a CSV file for SFT.
 
@@ -60,6 +61,12 @@ def create_sft_dataset(csv_path, input_col, output_col, output_dir, include_reas
 
         if include_reasoning:
             reasoning_text = str(row[reasoning_col]) if pd.notna(row[reasoning_col]) else ""
+            if include_facts:
+                facts = ast.literal_eval(row[facts_col]) if pd.notna(row[facts_col]) else []
+                answers = ast.literal_eval(row[output_col]) if pd.notna(row[output_col]) else []
+                answer_facts = [fact for fact in facts if any(answer in fact for answer in answers)]
+                facts_text = "I need to use the following facts to answer the question: " + str(answer_facts)
+                reasoning_text = reasoning_text + "" + facts_text
             formatted_text = {
                 "content": input_text,
                 "role": "user"
@@ -126,6 +133,8 @@ if __name__ == "__main__":
     parser.add_argument("--output_dir", type=str, required=True, help="Directory to save the formatted dataset.")
     parser.add_argument("--include_reasoning", action='store_true', help="Include reasoning trace in the format.")
     parser.add_argument("--reasoning_col", type=str, help="Column name for the reasoning trace (required if --include_reasoning is used).")
+    parser.add_argument("--include_facts", action='store_true', help="Include facts in the reasoning trace.")
+    parser.add_argument("--facts_col", type=str, help="Column name for the facts (required if --include_facts is used).")
 
     args = parser.parse_args()
 
@@ -135,7 +144,9 @@ if __name__ == "__main__":
         output_col=args.output_col,
         output_dir=args.output_dir,
         include_reasoning=args.include_reasoning,
-        reasoning_col=args.reasoning_col
+        reasoning_col=args.reasoning_col,
+        include_facts=args.include_facts,
+        facts_col=args.facts_col
     )
 
     merge_category_csvs(args.output_dir)

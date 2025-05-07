@@ -24,6 +24,8 @@ for index, row in dataset.iterrows():
     # Create a new row with the required columns
     new_row = {
         'index': index,
+        'triple_element': row['triple_element'],
+        'facts': row['facts'],
         'question': default_template.format(fact=row['facts'], question=row['question']),
         'reasoning': reasoning_template.format(relation=row['label']),
         'answer': row['answer']
