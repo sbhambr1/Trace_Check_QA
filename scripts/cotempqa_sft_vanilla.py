@@ -32,7 +32,7 @@ def train_sft(
     batch_size: int = 1, # Keep low for large models [2][3]
     gradient_accumulation_steps: int = 4, # Effective batch size = batch_size * gradient_accumulation_steps [2][3]
     learning_rate: float = 2e-4, # Common learning rate for LoRA [2][3]
-    num_train_epochs: int = 1, # Number of training epochs [3]
+    num_train_epochs: int = 3, # Number of training epochs [3]
     max_seq_length: int = 1024, # Adjust based on VRAM and dataset needs [2][3]
     logging_steps: int = 10, # Log metrics every N steps [2][3]
     save_steps: int = 50, # Save checkpoint every N steps
@@ -178,6 +178,8 @@ def train_sft(
 
     # model = accelerator.prepare(model)
 
+    model.config.use_cache = False
+
     # --- Configure LoRA ---
     print("Configuring LoRA adapter...")
     peft_config = LoraConfig(
@@ -246,7 +248,7 @@ def train_sft(
     print("Saving final LoRA adapter...")
     # SFTTrainer automatically saves the adapter during training based on save_steps
     # You can also save it explicitly after training finishes
-    final_adapter_path = os.path.join(output_dir, "final_adapter")
+    final_adapter_path = os.path.join("models/"+output_dir, "final_adapter")
     trainer.model.save_pretrained(final_adapter_path) # Saves only the adapter weights [3]
     tokenizer.save_pretrained(final_adapter_path) # Save tokenizer alongside adapter
     print(f"Training complete. Final LoRA adapter saved to {final_adapter_path}")
@@ -281,8 +283,8 @@ if __name__ == "__main__":
     parser.add_argument("--output_dir", type=str, default="./llama3-8b-sft-adapter", help="Directory to save the adapter.")
     parser.add_argument("--hf_token", type=str, default=None, help="Hugging Face Hub token (optional).")
     parser.add_argument("--wandb_token", type=str, default=None, help="Weights & Biases token (optional).")
-    parser.add_argument("--epochs", type=int, default=1, help="Number of training epochs.")
-    parser.add_argument("--batch_size", type=int, default=1, help="Per-device training batch size.")
+    parser.add_argument("--epochs", type=int, default=3, help="Number of training epochs.")
+    parser.add_argument("--batch_size", type=int, default=4, help="Per-device training batch size.")
     parser.add_argument("--grad_accum", type=int, default=4, help="Gradient accumulation steps.")
     parser.add_argument("--lr", type=float, default=2e-4, help="Learning rate.")
     parser.add_argument("--max_seq_len", type=int, default=1024, help="Maximum sequence length.")

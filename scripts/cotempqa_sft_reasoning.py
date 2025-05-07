@@ -247,7 +247,7 @@ def train_sft(
     print("Saving final LoRA adapter...")
     # SFTTrainer automatically saves the adapter during training based on save_steps
     # You can also save it explicitly after training finishes
-    final_adapter_path = os.path.join(output_dir, "final_adapter")
+    final_adapter_path = os.path.join("models/"+output_dir, "final_adapter")
     trainer.model.save_pretrained(final_adapter_path) # Saves only the adapter weights [3]
     tokenizer.save_pretrained(final_adapter_path) # Save tokenizer alongside adapter
     print(f"Training complete. Final LoRA adapter saved to {final_adapter_path}")

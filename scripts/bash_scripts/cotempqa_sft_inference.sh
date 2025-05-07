@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# SBATCH -c 1     # number of TASKS
-# SBATCH -N 1     # keep all tasks on the same node
-# SBATCH --mem=100G     # request 120 GB of memory
-# SBATCH -p general
-# SBATCH --gres=gpu:a100:1
-# SBATCH -t 0-01:30:00 
+#SBATCH --cpus-per-task=32     # number of TASKS
+#SBATCH -N 1     # keep all tasks on the same node
+#SBATCH --mem=80G     # request 120 GB of memory
+#SBATCH --partition general
+#SBATCH --gres=gpu:a100:1
+#SBATCH --time 2:00:00 
 
 # module load cuda/11.8
 
@@ -17,24 +17,27 @@ conda activate temporal
 # model_id: meta-llama/Llama-3.2-1B-Instruct ; meta-llama/Llama-3.2-3B-Instruct ; meta-llama/Llama-3.1-8B-Instruct ; mistralai/Mistral-7B-Instruct-v0.3 ; google/gemma-3-1b-it ; Qwen/Qwen3-4B ; Qwen/Qwen3-1.7B ; Qwen/Qwen3-8B
 
 data_types=("mix" "equal" "during" "overlap")
-modes=("default" "few_shot_cot" "few_shot" "default_with_trace")
-with_reasoning="false"
+# modes=("default" "few_shot_cot" "few_shot")
+modes=("default")
+with_reasoning="False"
 
 model_id=$1
 with_reasoning=$2
 model_name="${model_id#*/}"
 
 added_name=""
+adapter_name=""
 
 if [ "$with_reasoning" = "True" ]; then
     added_name="with_reasoning/"
+    adapter_name="-reasoning"
 fi
 
 for data_type in "${data_types[@]}"; do
     for mode in "${modes[@]}"; do
         python scripts/cotempqa_sft_inference.py \
             --model_name "${model_id}" \
-            --adapter_path "${model_name}-sft-adapter" \
+            --adapter_path "${model_name}-sft-adapter${adapter_name}" \
             --data_path "data/cotempqa/${data_type}.json" \
             --mode "$mode" \
             --output_dir "results/Cotempqa/evaluation_outputs/${data_type}_${mode}/${added_name}" \

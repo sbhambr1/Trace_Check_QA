@@ -5,7 +5,7 @@
 #SBATCH --mem=80G     # request 120 GB of memory
 #SBATCH --partition general
 #SBATCH --gres=gpu:a100:1
-#SBATCH --time 2:00:00 
+#SBATCH --time 3:00:00 
 
 # module load cuda-11.7.0-gcc-11.2.0 
 
@@ -24,5 +24,5 @@ model_name="${model_id#*/}"
 python scripts/cotempqa_sft_reasoning.py \
     --model_id "$model_id" \
     --expt_name "${model_name}-sft-cotempqa-reasoning-3ep" \
-    --output_dir "models/${model_name}-sft-adapter-reasoning" \
+    --output_dir "${model_name}-sft-adapter-reasoning" \
     --wandb_token $wandb_token
