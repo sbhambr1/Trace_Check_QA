@@ -24,14 +24,14 @@ def train_sft(
     hf_token: str = None, # Optional: For gated models or pushing to Hub
     wandb_token: str = None, # Optional: For logging to Weights & Biases
     use_qlora: bool = True,
-    lora_r: int = 16, # LoRA rank [2]
-    lora_alpha: int = 32, # LoRA alpha [2]
+    lora_r: int = 32, # LoRA rank [2]
+    lora_alpha: int = 64, # LoRA alpha [2]
     lora_dropout: float = 0.05,
     # Common target modules for Llama models [2]
     lora_target_modules: list = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
     batch_size: int = 4, # Keep low for large models [2][3]
     gradient_accumulation_steps: int = 4, # Effective batch size = batch_size * gradient_accumulation_steps [2][3]
-    learning_rate: float = 2e-4, # Common learning rate for LoRA [2][3]
+    learning_rate: float = 1e-5, # Common learning rate for LoRA [2][3]
     num_train_epochs: int = 3, # Number of training epochs [3]
     max_seq_length: int = 1024, # Adjust based on VRAM and dataset needs [2][3]
     logging_steps: int = 10, # Log metrics every N steps [2][3]
@@ -212,7 +212,7 @@ def train_sft(
         fp16=False if torch.cuda.is_bf16_supported() else True, # Use fp16 if bf16 not available
         optim="paged_adamw_8bit" if use_qlora else "adamw_torch", # Paged optimizer recommended for QLoRA [3]
         lr_scheduler_type="cosine", # A common scheduler
-        warmup_ratio=0.03, # Warmup ratio
+        warmup_ratio=0.1, # Warmup ratio
         gradient_checkpointing=gradient_checkpointing, # Enable gradient checkpointing [2]
         # group_by_length=True, # Group sequences of similar length to save computation (requires careful dataset handling)
         eval_strategy="steps", # Enable evaluation during training
@@ -247,7 +247,7 @@ def train_sft(
     print("Saving final LoRA adapter...")
     # SFTTrainer automatically saves the adapter during training based on save_steps
     # You can also save it explicitly after training finishes
-    final_adapter_path = os.path.join(output_dir, "final_adapter")
+    final_adapter_path = os.path.join("models/"+output_dir, "final_adapter")
     trainer.model.save_pretrained(final_adapter_path) # Saves only the adapter weights [3]
     tokenizer.save_pretrained(final_adapter_path) # Save tokenizer alongside adapter
     print(f"Training complete. Final LoRA adapter saved to {final_adapter_path}")
@@ -285,10 +285,10 @@ if __name__ == "__main__":
     parser.add_argument("--epochs", type=int, default=3, help="Number of training epochs.")
     parser.add_argument("--batch_size", type=int, default=4, help="Per-device training batch size.")
     parser.add_argument("--grad_accum", type=int, default=4, help="Gradient accumulation steps.")
-    parser.add_argument("--lr", type=float, default=2e-4, help="Learning rate.")
+    parser.add_argument("--lr", type=float, default=1e-5, help="Learning rate.")
     parser.add_argument("--max_seq_len", type=int, default=1024, help="Maximum sequence length.")
-    parser.add_argument("--lora_r", type=int, default=16, help="LoRA rank.")
-    parser.add_argument("--lora_alpha", type=int, default=32, help="LoRA alpha.")
+    parser.add_argument("--lora_r", type=int, default=32, help="LoRA rank.")
+    parser.add_argument("--lora_alpha", type=int, default=64, help="LoRA alpha.")
     parser.add_argument("--disable_qlora", action='store_true', help="Disable QLoRA (use fp16/bf16 instead).")
     parser.add_argument("--disable_flash_attention", action='store_true', help="Disable Flash Attention 2.")
 
