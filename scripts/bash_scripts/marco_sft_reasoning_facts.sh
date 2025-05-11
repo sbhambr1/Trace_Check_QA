@@ -25,4 +25,7 @@ python scripts/marco_sft_reasoning_facts.py \
     --model_id "$model_id" \
     --expt_name "${model_name}-sft-marcoqa-reasoning-facts-3ep" \
     --output_dir "models/${model_name}-sft-adapter-reasoning-facts" \
-    --wandb_token $wandb_token
+    --wandb_token $wandb_token \
+    --lr 1e-5 \
+    --lora_r 32 \
+    --lora_alpha 64
