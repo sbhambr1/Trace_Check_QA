@@ -54,7 +54,7 @@ def evaluate_babi_sft_model(
     
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
-    tokenizer.padding_side = "right"
+    tokenizer.padding_side = "left"
         
     final_adapter_path = os.path.join("models/" + adapter_path, "final_adapter")
     print("Merging adapter with base model...")
@@ -65,6 +65,9 @@ def evaluate_babi_sft_model(
         trust_remote_code=True,
     )
     merged_model = PeftModel.from_pretrained(base_model_reload, final_adapter_path)
+    merged_model.set_adapter("default")
+    for param in merged_model.parameters():
+        param.requires_grad = False
     merged_model = merged_model.merge_and_unload()
     
     all_outputs = []
