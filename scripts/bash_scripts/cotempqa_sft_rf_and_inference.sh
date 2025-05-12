@@ -25,4 +25,5 @@ python scripts/cotempqa_sft_reasoning_facts.py \
     --model_id "$model_id" \
     --expt_name "${model_name}-sft-cotempqa-reasoning-facts-and-inference" \
     --output_dir "models/${model_name}-sft-adapter-reasoning-facts" \
-    --wandb_token $wandb_token
+    --wandb_token $wandb_token \
+    --epochs 1

@@ -11,12 +11,14 @@ from transformers import (
     BitsAndBytesConfig,
     TrainingArguments,
     logging,
+    trainer_callback,
 )
 from peft import LoraConfig, get_peft_model, PeftModel
 from trl import SFTTrainer
 from huggingface_hub import login
 import wandb # Optional, for tracking
 from cotempqa_config import *
+import numpy as np
     
 torch.cuda.empty_cache()
 
@@ -224,6 +226,17 @@ def train_sft(
         eval_steps=0.2, # Evaluate every 20% of the steps within an epoch [3] - Requires eval dataset
         remove_unused_columns=False,
     )
+    
+    class SaveEvalPredictionsCallback(trainer_callback.TrainerCallback):
+        def on_evaluate(self, args, state, control, metrics=None, **kwargs):
+            # 'kwargs' contains 'model' and 'eval_dataloader'
+            trainer = kwargs['trainer']
+            eval_dataset = trainer.eval_dataset
+            predictions = trainer.predict(eval_dataset)
+            # convert to human readable text
+            predictions = tokenizer.batch_decode(predictions.predictions, skip_special_tokens=True)
+            output_file = os.path.join(args.output_dir, f"predictions_epoch_{state.epoch}.npy")
+            np.save(output_file, predictions.predictions)
 
     # --- Initialize SFTTrainer ---
     print("Initializing SFTTrainer...")
@@ -235,6 +248,7 @@ def train_sft(
         train_dataset=train_dataset, # Pass the entire dataset, SFTTrainer handles splitting if needed or uses 'train' split by default
         eval_dataset=test_dataset, # Uncomment if you have a 'test' split in your dataset [3]
         peft_config=peft_config, # Pass LoRA config here [3]
+        callbacks=[SaveEvalPredictionsCallback()], # Optional: Save evaluation predictions
     )
     
     if training_args.gradient_checkpointing:
@@ -310,6 +324,7 @@ def train_sft(
                 output = trainer.model.generate(**inputs, max_new_tokens=500)
                 if i < 10:
                     print(f"Prompt {i}: {prompt}")
+                    print(f'Output {i}: {output}')
                     print(f"Output {i}: {tokenizer.decode(output[0][inputs.input_ids.shape[-1]:], skip_special_tokens=True)}")
                     print("-*-" * 20)
             all_outputs.append(tokenizer.decode(output[0][inputs.input_ids.shape[-1]:], skip_special_tokens=True))
