@@ -73,6 +73,9 @@ def evaluate_cotemporal_sft_model(
         trust_remote_code=True,
     )
     merged_model = PeftModel.from_pretrained(base_model_reload, final_adapter_path)
+    merged_model.set_adapter("default")
+    for param in merged_model.parameters():
+        param.requires_grad = False
     merged_model = merged_model.merge_and_unload()
     
     all_outputs = []
