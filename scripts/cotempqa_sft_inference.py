@@ -62,7 +62,7 @@ def evaluate_cotemporal_sft_model(
     
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
-    tokenizer.padding_side = "right"
+    tokenizer.padding_side = "left"
         
     final_adapter_path = os.path.join("models/" + adapter_path, "final_adapter")
     print("Merging adapter with base model...")

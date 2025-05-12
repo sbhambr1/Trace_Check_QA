@@ -327,6 +327,7 @@ def evaluate_model(
         dataset=None,
         trainer=None,
     ):
+    
     all_data = []
     data_path = os.path.join(os.getcwd() + '/', data_path)
     with open(data_path, 'r', encoding='utf-8') as f:
@@ -361,7 +362,7 @@ def evaluate_model(
     
     all_outputs = []
     i = 0
-    for prompt in all_prompts[:5]:
+    for prompt in all_prompts:
         inputs = tokenizer(prompt['text'], return_tensors="pt").to("cuda")
         with torch.no_grad():
             output = trainer.model.generate(**inputs, max_new_tokens=500)
