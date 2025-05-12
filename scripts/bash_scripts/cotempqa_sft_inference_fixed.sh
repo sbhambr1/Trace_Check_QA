@@ -44,5 +44,5 @@ for mode in "${modes[@]}"; do
     python scripts/cotempqa_sft_inference_fixed.py \
         --model_name "${model_id}" \
         --adapter_path "${model_name}-sft-adapter${adapter_name}" \
-        --mode "$mode" \
+        --mode "$mode"
 done

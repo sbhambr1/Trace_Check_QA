@@ -18,12 +18,15 @@ wandb_token=$WANDB_API_KEY
 
 # model_id: meta-llama/Llama-3.2-1B-Instruct (60 mins) ; meta-llama/Llama-3.2-3B-Instruct ; meta-llama/Llama-3.1-8B-Instruct ; mistralai/Mistral-7B-Instruct-v0.3 ; google/gemma-3-1b-it ; Qwen/Qwen3-4B ; Qwen/Qwen3-1.7B ; Qwen/Qwen3-8B
 
-model_id="meta-llama/Llama-3.2-1B-Instruct"
+model_id=$1
 model_name="${model_id#*/}"
 
-python scripts/cotempqa_sft_reasoning_facts.py \
+python scripts/cotempqa_sft_rf_and_inference.py \
     --model_id "$model_id" \
     --expt_name "${model_name}-sft-cotempqa-reasoning-facts-and-inference" \
-    --output_dir "models/${model_name}-sft-adapter-reasoning-facts" \
+    --output_dir "models/${model_name}-sft-adapter-reasoning-facts-inference" \
     --wandb_token $wandb_token \
-    --epochs 3
+    --epochs 3 \
+    --lr 2e-4 \
+    --lora_r 16 \
+    --lora_alpha 32
