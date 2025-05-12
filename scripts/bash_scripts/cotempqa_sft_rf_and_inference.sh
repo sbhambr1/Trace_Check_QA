@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# SBATCH --cpus-per-task=32     # number of TASKS
-# SBATCH -N 1     # keep all tasks on the same node
-# SBATCH --mem=80G     # request 120 GB of memory
-# SBATCH --partition general
-# SBATCH --gres=gpu:a100:1
-# SBATCH --time 4:00:00 
+#SBATCH --cpus-per-task=32     # number of TASKS
+#SBATCH -N 1     # keep all tasks on the same node
+#SBATCH --mem=80G     # request 120 GB of memory
+#SBATCH --partition general
+#SBATCH --gres=gpu:a100:1
+#SBATCH --time 2:00:00 
 
 # module load cuda-11.7.0-gcc-11.2.0 
 
@@ -26,4 +26,4 @@ python scripts/cotempqa_sft_reasoning_facts.py \
     --expt_name "${model_name}-sft-cotempqa-reasoning-facts-and-inference" \
     --output_dir "models/${model_name}-sft-adapter-reasoning-facts" \
     --wandb_token $wandb_token \
-    --epochs 1
+    --epochs 3

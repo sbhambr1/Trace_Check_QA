@@ -174,7 +174,9 @@ def train_sft(
     model = AutoModelForCausalLM.from_pretrained(
         base_model_id,
         quantization_config=quantization_config, # Apply QLoRA config here
+        # device_map={"": "cuda:0"}, # Use the first GPU (or CPU) for training
         device_map="auto",  # oprint(next(model.parameters()).device)  # Should print "cuda:<rank>"r f"cuda:{accelerator.local_process_index}", # Use the specified device: {"": device} || Automatically distribute model across available GPUs/CPU: "auto"
+        
         torch_dtype=torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16,
         trust_remote_code=True,
         attn_implementation="flash_attention_2" if use_flash_attention_2 else "eager", # Use Flash Attention 2 if possible [2][3]
@@ -235,8 +237,10 @@ def train_sft(
             predictions = trainer.predict(eval_dataset)
             # convert to human readable text
             predictions = tokenizer.batch_decode(predictions.predictions, skip_special_tokens=True)
-            output_file = os.path.join(args.output_dir, f"predictions_epoch_{state.epoch}.npy")
-            np.save(output_file, predictions.predictions)
+            output_file = os.path.join(args.output_dir, f"predictions_epoch_{state.epoch}.json")
+            with open(output_file, "w") as f:
+                for pred in predictions:
+                    f.write(pred + "\n")
 
     # --- Initialize SFTTrainer ---
     print("Initializing SFTTrainer...")
@@ -248,7 +252,7 @@ def train_sft(
         train_dataset=train_dataset, # Pass the entire dataset, SFTTrainer handles splitting if needed or uses 'train' split by default
         eval_dataset=test_dataset, # Uncomment if you have a 'test' split in your dataset [3]
         peft_config=peft_config, # Pass LoRA config here [3]
-        callbacks=[SaveEvalPredictionsCallback()], # Optional: Save evaluation predictions
+        # callbacks=[SaveEvalPredictionsCallback()], # Optional: Save evaluation predictions
     )
     
     if training_args.gradient_checkpointing:
@@ -279,94 +283,16 @@ def train_sft(
     
     for data_path in data_paths:
         evaluate_model(
-            adapter_path=final_adapter_path,
+            model_name=base_model_id,
             data_path=data_path,
             output_dir="results/Cotempqa/evaluation_outputs/",
             evaluate_result_dir = "results/Cotempqa/evaluation_results/",
             mode=mode,
+            tokenizer=tokenizer,
+            dataset=dataset,
+            trainer=trainer,
         )
     
-    def evaluate_model(
-        adapter_path: str,
-        data_path: str,
-        output_dir: str,
-        evaluate_result_dir: str,
-        mode: str,
-    ):
-        all_data = []
-        data_path = os.path.join(os.getcwd() + '/', data_path)
-        with open(data_path, 'r', encoding='utf-8') as f:
-            for line in f:
-                data = json.loads(line)
-                all_data.append(data)
-                
-        # Load test samples from test.csv
-        test_csv = dataset["test"]
-        test_samples = []
-        test_df = pd.read_csv(test_csv)
-        for _, row in test_df.iterrows():
-            test_samples.append(row['question'])
-                
-        # Filter out test samples from all_data
-        test_data = []
-        test_questions = set(test_samples)
-        test_data = [data for data in all_data if any(data['question'] in question for question in test_questions)]
-        
-        all_data = test_data
-                
-        all_prompts = get_prompts(all_data, default_template)
-        
-        all_outputs = []
-        i = 0
-        for prompt in all_prompts:
-            inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
-            with torch.no_grad():
-                output = trainer.model.generate(**inputs, max_new_tokens=500)
-                if i < 10:
-                    print(f"Prompt {i}: {prompt}")
-                    print(f'Output {i}: {output}')
-                    print(f"Output {i}: {tokenizer.decode(output[0][inputs.input_ids.shape[-1]:], skip_special_tokens=True)}")
-                    print("-*-" * 20)
-            all_outputs.append(tokenizer.decode(output[0][inputs.input_ids.shape[-1]:], skip_special_tokens=True))
-            
-        output_data = []
-        for prompt, input_data, output in zip(all_prompts, all_data, all_outputs):
-            prompt = 'Answer the question based on the context:' + prompt.split('Answer the question based on the context:')[-1]
-            output_data.append({
-                'input': prompt,
-                'prediction': output,
-                'gold': input_data['answer'],
-                'triple_element': input_data['triple_element'],
-                'question': input_data['question'],
-                'facts': input_data['facts']
-            })
-            
-        filename = os.path.basename(data_path)
-        output_dir = os.path.join(os.getcwd() + '/', output_dir)
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-        
-        sanitized_model_name = adapter_path
-        output_path = os.path.join(output_dir, f"{sanitized_model_name}_{mode}_{filename}")
-        
-        with open(output_path, 'w', encoding='utf-8') as f:
-            for data in output_data:
-                json_data = json.dumps(data)
-                f.write(json_data + '\n')
-
-        result = evaluate_model(output_data, mode)
-            
-        evaluate_result_path = os.path.join(evaluate_result_dir, f"{sanitized_model_name}_{mode}_{filename}")
-        evaluate_result_dir = os.path.join(os.getcwd() + '/', evaluate_result_dir)
-        if not os.path.exists(evaluate_result_dir):
-            os.makedirs(evaluate_result_dir)
-            
-        with open(evaluate_result_path, 'w', encoding='utf-8') as f:
-            json_data = json.dumps(result)
-            f.write(json_data + '\n')
-            
-        print(f"Evaluation results saved to {evaluate_result_path}.")
-
     # --- Clean up Wandb ---
     if report_to == "wandb":
         wandb.finish()
@@ -374,7 +300,7 @@ def train_sft(
     # --- Optional: Merge Adapter and Save Full Model ---
     # This requires significant memory as it loads the base model in full precision
     # Consider running this as a separate step if memory is constrained
-    # print("Merging adapter with base model...")
+    # prnt("Merging adapter with base model...")
     # base_model_reload = AutoModelForCausalLM.from_pretrained(
     #     base_model_id,
     #     torch_dtype=torch.float16, # Load in float16 or bfloat16
@@ -389,6 +315,99 @@ def train_sft(
     # tokenizer.save_pretrained(merged_model_path)
     # print(f"Merged model saved to {merged_model_path}")
 
+
+
+def evaluate_model(
+        model_name: str,
+        data_path: str,
+        output_dir: str,
+        evaluate_result_dir: str,
+        mode: str,
+        tokenizer: AutoTokenizer,
+        dataset=None,
+        trainer=None,
+    ):
+    all_data = []
+    data_path = os.path.join(os.getcwd() + '/', data_path)
+    with open(data_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            data = json.loads(line)
+            all_data.append(data)
+            
+    # Load test samples from test.csv
+    test_csv = dataset["test"].to_pandas()
+    test_samples = []
+    for _, row in test_csv.iterrows():
+        test_samples.append(row['messages'][:-1])
+        
+    system_message_dict = test_samples[0][0]
+    test_data = [data for data in all_data if any(data['question'] in item[1]['content'] for item in test_samples)]
+    
+    def construct_prompt(sample, system_message_dict=system_message_dict):
+        prompt = 'Answer the question based on the context:\n{fact}\nQuestion: {question} Only return the answer.\n'
+        prompt = prompt.format(
+            fact=sample['facts'],
+            question=sample['question']
+        )
+        prompt = [{"role": "system", "content": system_message_dict}] + [{"role": "user", "content": prompt}]
+        return prompt
+   
+    def template_dataset(examples):
+        return{"text":  tokenizer.apply_chat_template(examples, tokenize=False)}
+            
+    # Construct the prompt for each sample
+    all_prompts = [construct_prompt(sample) for sample in test_data]
+    all_prompts = [template_dataset(prompt) for prompt in all_prompts]
+    
+    all_outputs = []
+    i = 0
+    for prompt in all_prompts[:5]:
+        inputs = tokenizer(prompt['text'], return_tensors="pt").to("cuda")
+        with torch.no_grad():
+            output = trainer.model.generate(**inputs, max_new_tokens=500)
+            if i < 5:
+                print(f"Prompt {i}: {prompt}")
+                print(f"Output {i}: {tokenizer.decode(output[0][inputs.input_ids.shape[-1]:], skip_special_tokens=True)}")
+                print("-*-" * 20)
+                i += 1
+        all_outputs.append(tokenizer.decode(output[0][inputs.input_ids.shape[-1]:], skip_special_tokens=True))
+    
+    output_data = []
+    for prompt, input_data, output in zip(all_prompts, test_data, all_outputs):
+        output_data.append({
+            'input': prompt,
+            'prediction': output,
+            'gold': input_data['answer'],
+            'triple_element': input_data['triple_element'],
+            'question': input_data['question'],
+            'facts': input_data['facts']
+        })
+        
+    # filename = os.path.basename(data_path)
+    output_dir = os.path.join(os.getcwd() + '/', output_dir)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    
+    sanitized_model_name = model_name.replace("/", "_").replace(":", "_")
+    output_path = os.path.join(output_dir, f"{sanitized_model_name}_{mode}")
+    
+    with open(output_path, 'w', encoding='utf-8') as f:
+        for data in output_data:
+            json_data = json.dumps(data)
+            f.write(json_data + '\n')
+
+    result = evaluate_model(output_data, mode)
+        
+    evaluate_result_path = os.path.join(evaluate_result_dir, f"{sanitized_model_name}_{mode}")
+    evaluate_result_dir = os.path.join(os.getcwd() + '/', evaluate_result_dir)
+    if not os.path.exists(evaluate_result_dir):
+        os.makedirs(evaluate_result_dir)
+        
+    with open(evaluate_result_path, 'w', encoding='utf-8') as f:
+        json_data = json.dumps(result)
+        f.write(json_data + '\n')
+        
+    print(f"Evaluation results saved to {evaluate_result_path}.")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Fine-tune a Llama 3.1 model using SFTTrainer and QLoRA.")
