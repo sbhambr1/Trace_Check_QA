@@ -25,6 +25,7 @@ torch.cuda.empty_cache()
 def evaluate_model_all_data(
         model_name: str,
         data_path: str,
+        adapter_path: str,
         output_dir: str,
         evaluate_result_dir: str,
         mode: str,
@@ -94,7 +95,7 @@ def evaluate_model_all_data(
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
-    sanitized_model_name = model_name.replace("/", "_").replace(":", "_")
+    sanitized_model_name = adapter_path
     output_path = os.path.join(output_dir, f"{sanitized_model_name}_{mode}")
     
     with open(output_path, 'w', encoding='utf-8') as f:
@@ -104,7 +105,9 @@ def evaluate_model_all_data(
 
     result = evaluate_model(output_data, mode)
         
-    evaluate_result_path = os.path.join(evaluate_result_dir, f"{sanitized_model_name}_{mode}")
+    category_type = data_path.split(".json")[0].split("/")[-1]
+    category_dir = os.path.join(evaluate_result_dir, category_type)
+    evaluate_result_path = os.path.join(category_dir, f"{sanitized_model_name}_{mode}")
     evaluate_result_dir = os.path.join(os.getcwd() + '/', evaluate_result_dir)
     if not os.path.exists(evaluate_result_dir):
         os.makedirs(evaluate_result_dir)
@@ -174,6 +177,7 @@ def evaluate_cotemporal_sft_model(
         evaluate_model_all_data(
             model_name=base_model_id,
             data_path=data_path,
+            adapter_path=adapter_path,
             output_dir="results/Cotempqa/evaluation_outputs/",
             evaluate_result_dir = "results/Cotempqa/evaluation_results/",
             mode=mode,
