@@ -89,14 +89,14 @@ def evaluate_model_all_data(
             'question': input_data['question'],
             'facts': input_data['facts']
         })
-        
-    # filename = os.path.basename(data_path)
-    output_dir = os.path.join(os.getcwd() + '/', output_dir)
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    
+    category_type = data_path.split(".json")[0].split("/")[-1]
+    category_dir_result_data = os.path.join(output_dir, category_type)
+    if not os.path.exists(category_dir_result_data):
+        os.makedirs(category_dir_result_data)
     
     sanitized_model_name = adapter_path
-    output_path = os.path.join(output_dir, f"{sanitized_model_name}_{mode}")
+    output_path = os.path.join(category_dir_result_data, f"{sanitized_model_name}_{mode}")
     
     with open(output_path, 'w', encoding='utf-8') as f:
         for data in output_data:
@@ -105,9 +105,9 @@ def evaluate_model_all_data(
 
     result = evaluate_model(output_data, mode)
         
-    category_type = data_path.split(".json")[0].split("/")[-1]
-    category_dir = os.path.join(evaluate_result_dir, category_type)
-    evaluate_result_path = os.path.join(category_dir, f"{sanitized_model_name}_{mode}")
+    category_dir_results = os.path.join(evaluate_result_dir, category_type)
+    
+    evaluate_result_path = os.path.join(category_dir_results, f"{sanitized_model_name}_{mode}")
     if not os.path.exists(evaluate_result_path):
         os.makedirs(evaluate_result_path)
         
