@@ -109,7 +109,7 @@ def train_sft(
             return sample
  
     # Load dataset from the hub
-    dataset = load_dataset("sbhambr1/marcoqa_for_sft", data_files={"train": "train.csv", "test": "test.csv"})
+    dataset = load_dataset("sbhambr1/marcoqa_for_sft", data_files={"train": "train.csv", "test": "test.csv"}, download_mode="force_redownload")
     
     # Parse the "messages" column as a list
     dataset = dataset.map(parse_messages_column, batched=False)
