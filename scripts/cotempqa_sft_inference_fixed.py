@@ -125,7 +125,14 @@ def evaluate_cotemporal_sft_model(
     dataset = load_dataset("sbhambr1/cotempqa_for_sft_reasoning_facts", data_files={"train": "train.csv", "test": "test.csv"})
     
     # --- Load Dataset ---
-    system_message = """You are Llama, an AI assistant created by Philipp to be helpful and honest. Your knowledge spans a wide range of topics, allowing you to engage in substantive conversations and provide analysis on complex subjects."""
+    if 'llama' in base_model_id.lower():
+        system_message = """You are Llama, an AI assistant created to be helpful and honest. Your knowledge spans a wide range of topics, allowing you to engage in substantive conversations and provide analysis on complex subjects."""
+    elif 'qwen' in base_model_id.lower():
+        system_message = """You are Qwen, an AI assistant created to be helpful and honest. Your knowledge spans a wide range of topics, allowing you to engage in substantive conversations and provide analysis on complex subjects."""
+    elif 'gemma' in base_model_id.lower():
+        system_message = """You are Gemma, an AI assistant created to be helpful and honest. Your knowledge spans a wide range of topics, allowing you to engage in substantive conversations and provide analysis on complex subjects."""
+    elif 'mistral' in base_model_id.lower():
+        system_message = """You are Mistral, an AI assistant created to be helpful and honest. Your knowledge spans a wide range of topics, allowing you to engage in substantive conversations and provide analysis on complex subjects."""
     def parse_messages_column(sample):
         if isinstance(sample["messages"], str):
             sample["messages"] = ast.literal_eval(sample["messages"])  # Convert string to list
