@@ -23,7 +23,7 @@ wandb_token=$WANDB_API_KEY
 model_id=$1
 model_name="${model_id#*/}"
 
-python scripts/babi_sft_reasoning.py \
+python scripts/babiqa_sft_reasoning.py \
     --model_id "$model_id" \
     --expt_name "${model_name}-sft-babiqa-reasoning-3ep" \
     --output_dir "${model_name}-sft-adapter-reasoning" \
