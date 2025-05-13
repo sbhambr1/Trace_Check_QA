@@ -105,19 +105,11 @@ def evaluate_model_all_data(
 
     result = evaluate_model(output_data, mode)
         
-<<<<<<< HEAD
-    category_type = data_path.split(".json")[0].split("/")[-1]
-    category_dir = os.path.join(evaluate_result_dir, category_type)
-    if not os.path.exists(category_dir):
-        os.makedirs(category_dir)
-    evaluate_result_path = os.path.join(category_dir, f"{sanitized_model_name}_{mode}.json")
-=======
     category_dir_results = os.path.join(evaluate_result_dir, category_type)
     
     evaluate_result_path = os.path.join(category_dir_results, f"{sanitized_model_name}_{mode}")
     if not os.path.exists(evaluate_result_path):
         os.makedirs(evaluate_result_path)
->>>>>>> 2f2adf8a8eb2234bd0966df4d3400a24ab53fc38
         
     with open(evaluate_result_path, 'w', encoding='utf-8') as f:
         json_data = json.dumps(result)
