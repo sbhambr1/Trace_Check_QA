@@ -89,14 +89,14 @@ def evaluate_model_all_data(
             'question': input_data['question'],
             'facts': input_data['facts']
         })
-        
-    # filename = os.path.basename(data_path)
-    output_dir = os.path.join(os.getcwd() + '/', output_dir)
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    
+    category_type = data_path.split(".json")[0].split("/")[-1]
+    category_dir_result_data = os.path.join(output_dir, category_type)
+    if not os.path.exists(category_dir_result_data):
+        os.makedirs(category_dir_result_data)
     
     sanitized_model_name = adapter_path
-    output_path = os.path.join(output_dir, f"{sanitized_model_name}_{mode}")
+    output_path = os.path.join(category_dir_result_data, f"{sanitized_model_name}_{mode}")
     
     with open(output_path, 'w', encoding='utf-8') as f:
         for data in output_data:
@@ -105,11 +105,19 @@ def evaluate_model_all_data(
 
     result = evaluate_model(output_data, mode)
         
+<<<<<<< HEAD
     category_type = data_path.split(".json")[0].split("/")[-1]
     category_dir = os.path.join(evaluate_result_dir, category_type)
     if not os.path.exists(category_dir):
         os.makedirs(category_dir)
     evaluate_result_path = os.path.join(category_dir, f"{sanitized_model_name}_{mode}.json")
+=======
+    category_dir_results = os.path.join(evaluate_result_dir, category_type)
+    
+    evaluate_result_path = os.path.join(category_dir_results, f"{sanitized_model_name}_{mode}")
+    if not os.path.exists(evaluate_result_path):
+        os.makedirs(evaluate_result_path)
+>>>>>>> 2f2adf8a8eb2234bd0966df4d3400a24ab53fc38
         
     with open(evaluate_result_path, 'w', encoding='utf-8') as f:
         json_data = json.dumps(result)
@@ -125,7 +133,14 @@ def evaluate_cotemporal_sft_model(
     dataset = load_dataset("sbhambr1/cotempqa_for_sft_reasoning_facts", data_files={"train": "train.csv", "test": "test.csv"})
     
     # --- Load Dataset ---
-    system_message = """You are Llama, an AI assistant created by Philipp to be helpful and honest. Your knowledge spans a wide range of topics, allowing you to engage in substantive conversations and provide analysis on complex subjects."""
+    if 'llama' in base_model_id.lower():
+        system_message = """You are Llama, an AI assistant created to be helpful and honest. Your knowledge spans a wide range of topics, allowing you to engage in substantive conversations and provide analysis on complex subjects."""
+    elif 'qwen' in base_model_id.lower():
+        system_message = """You are Qwen, an AI assistant created to be helpful and honest. Your knowledge spans a wide range of topics, allowing you to engage in substantive conversations and provide analysis on complex subjects."""
+    elif 'gemma' in base_model_id.lower():
+        system_message = """You are Gemma, an AI assistant created to be helpful and honest. Your knowledge spans a wide range of topics, allowing you to engage in substantive conversations and provide analysis on complex subjects."""
+    elif 'mistral' in base_model_id.lower():
+        system_message = """You are Mistral, an AI assistant created to be helpful and honest. Your knowledge spans a wide range of topics, allowing you to engage in substantive conversations and provide analysis on complex subjects."""
     def parse_messages_column(sample):
         if isinstance(sample["messages"], str):
             sample["messages"] = ast.literal_eval(sample["messages"])  # Convert string to list
