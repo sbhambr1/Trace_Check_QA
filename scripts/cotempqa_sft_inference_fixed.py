@@ -22,7 +22,7 @@ warnings.filterwarnings("ignore")
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 torch.cuda.empty_cache()
 
-def evaluate_model(
+def evaluate_model_all_data(
         model_name: str,
         data_path: str,
         output_dir: str,
@@ -171,7 +171,7 @@ def evaluate_cotemporal_sft_model(
     data_paths = ["./data/cotempqa/mix.json", "./data/cotempqa/equal.json", "./data/cotempqa/overlap.json", "./data/cotempqa/during.json"]
     
     for data_path in data_paths:
-        evaluate_model(
+        evaluate_model_all_data(
             model_name=base_model_id,
             data_path=data_path,
             output_dir="results/Cotempqa/evaluation_outputs/",
@@ -179,7 +179,7 @@ def evaluate_cotemporal_sft_model(
             mode=mode,
             tokenizer=tokenizer,
             dataset=dataset,
-            model=merged_model
+            merged_model=merged_model
         )
     
     
