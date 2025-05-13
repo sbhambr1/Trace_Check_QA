@@ -12,6 +12,8 @@
 eval "$(conda shell.bash hook)"
 conda activate temporal
 
+git checkout main
+
 # cd /home/sbhambr1/research/temporal_llms/temporal_llms/
 
 # model_id: meta-llama/Llama-3.2-1B-Instruct ; meta-llama/Llama-3.2-3B-Instruct ; meta-llama/Llama-3.1-8B-Instruct ; mistralai/Mistral-7B-Instruct-v0.3 ; google/gemma-3-1b-it ; Qwen/Qwen3-4B ; Qwen/Qwen3-1.7B ; Qwen/Qwen3-8B
