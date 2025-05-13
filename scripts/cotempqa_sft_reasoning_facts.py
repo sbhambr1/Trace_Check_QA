@@ -292,10 +292,10 @@ if __name__ == "__main__":
     parser.add_argument("--epochs", type=int, default=3, help="Number of training epochs.")
     parser.add_argument("--batch_size", type=int, default=4, help="Per-device training batch size.")
     parser.add_argument("--grad_accum", type=int, default=4, help="Gradient accumulation steps.")
-    parser.add_argument("--lr", type=float, default=1e-5, help="Learning rate.")
+    parser.add_argument("--lr", type=float, default=2e-4, help="Learning rate.")
     parser.add_argument("--max_seq_len", type=int, default=1024, help="Maximum sequence length.")
-    parser.add_argument("--lora_r", type=int, default=32, help="LoRA rank.")
-    parser.add_argument("--lora_alpha", type=int, default=64, help="LoRA alpha.")
+    parser.add_argument("--lora_r", type=int, default=16, help="LoRA rank.")
+    parser.add_argument("--lora_alpha", type=int, default=32, help="LoRA alpha.")
     parser.add_argument("--disable_qlora", action='store_true', help="Disable QLoRA (use fp16/bf16 instead).")
     parser.add_argument("--disable_flash_attention", action='store_true', help="Disable Flash Attention 2.")
 
