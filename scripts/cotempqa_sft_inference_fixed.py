@@ -56,7 +56,7 @@ def evaluate_model_all_data(
             fact=sample['facts'],
             question=sample['question']
         )
-        prompt = [{"role": "system", "content": system_message_dict}] + [{"role": "user", "content": prompt}]
+        prompt = [system_message_dict] + [{"role": "user", "content": prompt}]
         return prompt
    
     def template_dataset(examples):
@@ -73,6 +73,7 @@ def evaluate_model_all_data(
         with torch.no_grad():
             output = merged_model.generate(**inputs, max_new_tokens=500)
             if i < 5:
+                print('Category:', data_path.split(".json")[0].split("/")[-1])
                 print(f"Prompt {i}: {prompt}")
                 print(f"Output {i}: {tokenizer.decode(output[0][inputs.input_ids.shape[-1]:], skip_special_tokens=True)}")
                 print("-*-" * 20)
