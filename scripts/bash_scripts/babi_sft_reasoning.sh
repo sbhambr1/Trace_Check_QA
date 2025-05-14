@@ -26,5 +26,5 @@ model_name="${model_id#*/}"
 python scripts/babiqa_sft_reasoning.py \
     --model_id "$model_id" \
     --expt_name "${model_name}-sft-babiqa-reasoning-3ep" \
-    --output_dir "${model_name}-sft-adapter-reasoning" \
+    --output_dir "$babiqa/{model_name}-sft-adapter-reasoning" \
     --wandb_token $wandb_token
