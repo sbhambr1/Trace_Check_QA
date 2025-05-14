@@ -95,7 +95,7 @@ def evaluate_model_all_data(
     if not os.path.exists(category_dir_result_data):
         os.makedirs(category_dir_result_data)
     
-    sanitized_model_name = final_adapter_path
+    sanitized_model_name = adapter_path.split('/')[-2]
     output_path = os.path.join(category_dir_result_data, f"{sanitized_model_name}_{mode}.json")
     
     with open(output_path, 'w', encoding='utf-8') as f:
@@ -156,7 +156,7 @@ def evaluate_cotemporal_sft_model(
     dataset["train"].to_json("train_dataset.json", orient="records", force_ascii=False)
     dataset["test"].to_json("test_dataset.json", orient="records", force_ascii=False)
     
-    final_adapter_path = os.path.join('models' + adapter_path, "final_adapter")
+    final_adapter_path = os.path.join('models/' + adapter_path, "final_adapter")
     tokenizer = AutoTokenizer.from_pretrained(base_model_id)
     
     if tokenizer.pad_token is None:
