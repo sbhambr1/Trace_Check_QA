@@ -42,7 +42,7 @@ fi
 for mode in "${modes[@]}"; do
     python scripts/babi_sft_inference.py \
         --model_name "${model_id}" \
-        --adapter_path "${model_name}-sft-adapter${adapter_name}" \
+        --adapter_path "babiqa/${model_name}-sft-adapter${adapter_name}" \
         --data_path "data/babiqa/sft_dataset_chat_template/test.csv"" \
         --mode "$mode" \
         --output_dir "results/babiqa/evaluation_outputs/${mode}/${added_name}" \
