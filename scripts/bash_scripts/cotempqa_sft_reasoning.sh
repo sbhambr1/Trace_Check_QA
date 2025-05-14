@@ -26,5 +26,5 @@ model_name="${model_id#*/}"
 python scripts/cotempqa_sft_reasoning.py \
     --model_id "$model_id" \
     --expt_name "${model_name}-sft-cotempqa-reasoning-3ep" \
-    --output_dir "${model_name}-sft-adapter-reasoning" \
+    --output_dir "cotempqa/${model_name}-sft-adapter-reasoning" \
     --wandb_token $wandb_token

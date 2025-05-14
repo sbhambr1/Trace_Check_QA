@@ -26,5 +26,5 @@ model_name="${model_id#*/}"
 python scripts/cotempqa_sft_vanilla.py \
     --model_id "$model_id" \
     --expt_name "${model_name}-sft-cotempqa-3ep" \
-    --output_dir "${model_name}-sft-adapter" \
+    --output_dir "cotempqa/${model_name}-sft-adapter" \
     --wandb_token $wandb_token
