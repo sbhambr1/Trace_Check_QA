@@ -156,7 +156,7 @@ def evaluate_cotemporal_sft_model(
     dataset["train"].to_json("train_dataset.json", orient="records", force_ascii=False)
     dataset["test"].to_json("test_dataset.json", orient="records", force_ascii=False)
     
-    final_adapter_path = os.path.join('models/' + adapter_path, "final_adapter")
+    final_adapter_path = os.path.join('models', adapter_path, "final_adapter")
     tokenizer = AutoTokenizer.from_pretrained(base_model_id)
     
     if tokenizer.pad_token is None:
@@ -171,6 +171,8 @@ def evaluate_cotemporal_sft_model(
         # device_map={"": "cuda:0"},
         trust_remote_code=True,
     )
+    base_model_reload.config.use_cache = False
+    
     merged_model = PeftModel.from_pretrained(base_model_reload, final_adapter_path)
     merged_model.set_adapter("default")
     for param in merged_model.parameters():
