@@ -26,5 +26,5 @@ model_name="${model_id#*/}"
 python scripts/marco_sft_reasoning.py \
     --model_id "$model_id" \
     --expt_name "${model_name}-sft-marcoqa-reasoning-3ep" \
-    --output_dir "$marcoqa/{model_name}-sft-adapter-reasoning" \
+    --output_dir "marcoqa/${model_name}-sft-adapter-reasoning" \
     --wandb_token $wandb_token
