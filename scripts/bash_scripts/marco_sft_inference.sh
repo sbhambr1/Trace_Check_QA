@@ -43,7 +43,7 @@ fi
 for mode in "${modes[@]}"; do
     python scripts/marco_sft_inference.py \
         --model_name "${model_id}" \
-        --adapter_path "${model_name}-sft-adapter${adapter_name}" \
+        --adapter_path "$marcoqa/{model_name}-sft-adapter${adapter_name}" \
         --mode "$mode" \
         --output_dir "results/marcoqa/evaluation_outputs/${mode}/${added_name}" \
         --evaluate_result_dir "results/marcoqa/evaluation_results/${mode}/${added_name}"
