@@ -34,15 +34,13 @@ def get_gold_facts(gold_facts_text):
     answer_facts = [fact for fact in facts if any(answer in fact for answer in answers)]
     return answer_facts
 
+query_types = ["single-supporting-fact","two-supporting-facts","two-arg-relations","counting","lists-sets","conjunction","time-reasoning","basic-deduction","basic-induction","positional-reasoning", "size-reasoning"]
+
 def get_gold_category(gold_category_text):
-    if 'during' in gold_category_text:
-                gold_category = 'during'
-    elif 'equal' in gold_category_text:
-        gold_category = 'equal'
-    elif 'overlap' in gold_category_text:
-        gold_category = 'overlap'
-    elif 'mix' in gold_category_text:
-        gold_category = 'mix'
+    for query_type in query_types:
+        if query_type in gold_category_text.lower():
+            gold_category = query_type
+            break
         
     return gold_category
 
@@ -66,24 +64,24 @@ def get_trace_eval(trace_eval_path, golden_eval_path):
             predicted_trace = predicted_answer.split('</think>')[0]
             if predicted_trace == '':
                 continue
-            predicted_category = predicted_trace.split('.')[0]
+            predicted_category = predicted_trace.split('.')[1] if len(predicted_trace.split('.')) > 1 else predicted_trace.split('.')[0]
             if len(predicted_trace.split('.')) > 1:
                 predicted_fact = predicted_trace.split('.')[1]
             else:
                 predicted_fact = ''
-            gold_answer = line['gold'][0]
+            gold_answer = line['gold']
             for index in range(len(golden_csv)):
                 if gold_answer in golden_csv.iloc[index]['answer']:
                     row = golden_csv.iloc[index]
                     break
                 
             gold_category = get_gold_category(row['reasoning'])
-            gold_facts = get_gold_facts(row['facts'])
+            gold_facts = get_gold_facts(row['passages'])
             
             facts_text = "I need to use the following facts to answer the question: " + str(gold_facts)
             reasoning_text = row['reasoning'] + "" + facts_text
             
-            if gold_category in predicted_category:
+            if gold_category in predicted_category.lower():
                 category_accuracy += 1.0
             for fact in gold_facts:
                 if fact in predicted_trace:
@@ -98,38 +96,35 @@ def get_trace_eval(trace_eval_path, golden_eval_path):
 
 def main(adapter_name):
 
-    categories = ['equal', 'during', 'mix', 'overlap']
     
     total_accuracy = 0.0
     total_fact_accuracy = 0.0
     total_bleu_score = 0.0
     total_rogue_score = 0.0
     total_trace_length = 0.0
-
-    for category in categories:
         
-        trace_eval_path = f'results/Cotempqa/cotempqa_evaluation_outputs/{category}/{adapter_name}'
-        if 'reasoning-facts' in adapter_name:
-            golden_eval_path = f'data/cotempqa/sft_dataset_reasoning_with_facts_chat_template/{category}_test.csv'
-        elif 'reasoning' in adapter_name:
-            golden_eval_path = f'data/cotempqa/sft_dataset_reasoning_chat_template/{category}_test.csv'
-        else:
-            golden_eval_path = f'data/cotempqa/sft_dataset_chat_template/{category}_test.csv'
-            
-        category_accuracy, fact_accuracy, bleu_score, rogue_score, avg_trace_length = get_trace_eval(trace_eval_path, golden_eval_path)
+    trace_eval_path = f'results/Babiqa/evaluation_outputs/{adapter_name}'
+    if 'reasoning-facts' in adapter_name:
+        golden_eval_path = f'data/babiqa/sft_dataset_reasoning_with_facts_chat_template/test.csv'
+    elif 'reasoning' in adapter_name:
+        golden_eval_path = f'data/babiqa/sft_dataset_reasoning_chat_template/test.csv'
+    else:
+        golden_eval_path = f'data/babiqa/sft_dataset_chat_template/test.csv'
         
-        total_accuracy += category_accuracy
-        total_fact_accuracy += fact_accuracy
-        total_bleu_score += bleu_score
-        total_rogue_score += rogue_score
-        total_trace_length += avg_trace_length
+    category_accuracy, fact_accuracy, bleu_score, rogue_score, avg_trace_length = get_trace_eval(trace_eval_path, golden_eval_path)
+    
+    total_accuracy += category_accuracy
+    total_fact_accuracy += fact_accuracy
+    total_bleu_score += bleu_score
+    total_rogue_score += rogue_score
+    total_trace_length += avg_trace_length
         
-    avg_accuracy = total_accuracy / len(categories)
-    avg_fact_accuracy = total_fact_accuracy / len(categories)
-    avg_bleu_score = total_bleu_score / len(categories)
-    avg_rogue_score = total_rogue_score / len(categories)
-    avg_trace_length = total_trace_length / len(categories)
-
+    avg_accuracy = total_accuracy 
+    avg_fact_accuracy = total_fact_accuracy 
+    avg_bleu_score = total_bleu_score 
+    avg_rogue_score = total_rogue_score 
+    avg_trace_length = total_trace_length 
+    
     print("Average Category Accuracy:", avg_accuracy*100)
     print("Average Fact Accuracy:", avg_fact_accuracy*100)
     print("Average BLEU Score:", avg_bleu_score)
@@ -139,9 +134,10 @@ def main(adapter_name):
 if __name__ == "__main__":
     
     # adapter_name = 'Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts-perturbed_default.json'
-    adapter_names = "Qwen3-1.7B-sft-adapter-reasoning-facts-perturbed_default.json" , "Qwen3-1.7B-sft-adapter-reasoning-facts_default.json", "Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts-perturbed_default.json", "Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts_default.json"
+    adapter_names = ["Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts_default.json", "Qwen3-1.7B-sft-adapter-reasoning-facts_default.json"]
     
     for adapter_name in adapter_names:
         print('\n\n')
         print("="*50)
-        print(f"Evaluating adapter: {adapter_name}") 
+        print(f"Evaluating adapter: {adapter_name}")
+        main(adapter_name)
