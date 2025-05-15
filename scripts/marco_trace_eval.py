@@ -44,7 +44,7 @@ def get_gold_category(gold_category_text):
     elif 'location' in gold_category_text.lower():
         gold_category = 'location'
     elif 'person' in gold_category_text.lower():
-        gold_category ='personc'
+        gold_category ='person'
         
     return gold_category
 
