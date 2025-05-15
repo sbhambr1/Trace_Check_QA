@@ -5,7 +5,7 @@
 #SBATCH --mem=80G     # request 120 GB of memory
 #SBATCH --partition general
 #SBATCH --gres=gpu:a100:1
-#SBATCH --time 2:00:00 
+#SBATCH --time 1:00:00 
 
 # module load cuda/11.8
 
@@ -18,6 +18,8 @@ git checkout marcoqa
 
 # model_id: meta-llama/Llama-3.2-1B-Instruct ; meta-llama/Llama-3.2-3B-Instruct ; meta-llama/Llama-3.1-8B-Instruct ; mistralai/Mistral-7B-Instruct-v0.3 ; google/gemma-3-1b-it ; Qwen/Qwen3-4B ; Qwen/Qwen3-1.7B ; Qwen/Qwen3-8B
 
+# data_types=("mix" "equal" "during" "overlap")
+# data_types=(")
 # modes=("default" "few_shot_cot" "few_shot")
 modes=("default")
 with_reasoning="False"
@@ -41,10 +43,8 @@ if [ "$with_reasoning_facts" = "True" ]; then
 fi
 
 for mode in "${modes[@]}"; do
-    python scripts/marco_sft_inference.py \
+    python scripts/marcoqa_sft_inference_fixed.py \
         --model_name "${model_id}" \
-        --adapter_path "$marcoqa/{model_name}-sft-adapter${adapter_name}" \
-        --mode "$mode" \
-        --output_dir "results/marcoqa/evaluation_outputs/${mode}/${added_name}" \
-        --evaluate_result_dir "results/marcoqa/evaluation_results/${mode}/${added_name}"
+        --adapter_path "marcoqa/${model_name}-sft-adapter${adapter_name}" \
+        --mode "$mode"
 done
