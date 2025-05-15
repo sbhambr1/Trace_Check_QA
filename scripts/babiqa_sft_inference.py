@@ -118,7 +118,7 @@ def evaluate_marco_sft_model(
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
-    sanitized_model_name = adapter_path
+    sanitized_model_name = adapter_path.split("/")[-1]
     output_path = os.path.join(output_dir, f"{sanitized_model_name}_{mode}.json")
     
     with open(output_path, 'w', encoding='utf-8') as f:

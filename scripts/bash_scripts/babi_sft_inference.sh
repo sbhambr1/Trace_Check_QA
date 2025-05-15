@@ -43,7 +43,7 @@ if [ "$with_reasoning_facts" = "True" ]; then
 fi
 
 for mode in "${modes[@]}"; do
-    python scripts/babiqa_sft_inference_fixed.py \
+    python scripts/babiqa_sft_inference.py \
         --model_name "${model_id}" \
         --adapter_path "babiqa/${model_name}-sft-adapter${adapter_name}" \
         --mode "$mode"
