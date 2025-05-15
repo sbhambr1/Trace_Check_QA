@@ -43,7 +43,7 @@ if [ "$with_reasoning_facts" = "True" ]; then
 fi
 
 for mode in "${modes[@]}"; do
-    python scripts/marco_sft_inference_fixed.py \
+    python scripts/marco_sft_inference.py \
         --model_name "${model_id}" \
         --adapter_path "marcoqa/${model_name}-sft-adapter${adapter_name}" \
         --mode "$mode"
