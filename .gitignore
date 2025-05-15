@@ -9,3 +9,4 @@ results/Cotempqa/evaluation_outputs/
 .gitignore
 /train_dataset.json
 /test_dataset.json
+results/Cotempqa/cotempqa_evaluation_outputs/
