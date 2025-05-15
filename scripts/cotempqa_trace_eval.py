@@ -1,6 +1,7 @@
 import os
 import ast
 import json
+from tqdm import tqdm
 import pandas as pd
 from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
 from rouge_score import rouge_scorer
@@ -56,7 +57,7 @@ def get_trace_eval(trace_eval_path, golden_eval_path):
     golden_csv = pd.read_csv(golden_eval_path)
     
     with open(trace_eval_path, 'r') as f:
-        for line in f:
+        for line in tqdm(f):
             total += 1.0
             line = json.loads(line)
             if 'think' not in line['prediction']:
@@ -85,7 +86,7 @@ def get_trace_eval(trace_eval_path, golden_eval_path):
             if gold_category in predicted_category:
                 category_accuracy += 1.0
             for fact in gold_facts:
-                if fact in predicted_fact:
+                if fact in predicted_trace:
                     fact_accuracy += 1.0
                     break
             bleu_score += compute_bleu_score(predicted_answer, reasoning_text)
@@ -98,17 +99,16 @@ def get_trace_eval(trace_eval_path, golden_eval_path):
 def main(adapter_name):
 
     categories = ['equal', 'during', 'mix', 'overlap']
+    
+    total_accuracy = 0.0
+    total_fact_accuracy = 0.0
+    total_bleu_score = 0.0
+    total_rogue_score = 0.0
+    total_trace_length = 0.0
 
     for category in categories:
         
-        total_accuracy = 0.0
-        total_fact_accuracy = 0.0
-        total_bleu_score = 0.0
-        total_rogue_score = 0.0
-        total_trace_length = 0.0
-        
-        
-        trace_eval_path = f'results/Cotempqa/evaluation_outputs/{category}/{adapter_name}'
+        trace_eval_path = f'results/Cotempqa/cotempqa_evaluation_outputs/{category}/{adapter_name}'
         if 'reasoning-facts' in adapter_name:
             golden_eval_path = f'data/cotempqa/sft_dataset_reasoning_with_facts_chat_template/{category}_test.csv'
         elif 'reasoning' in adapter_name:
@@ -130,14 +130,19 @@ def main(adapter_name):
     avg_rogue_score = total_rogue_score / len(categories)
     avg_trace_length = total_trace_length / len(categories)
 
-    print("Average Accuracy:", avg_accuracy)
-    print("Average Fact Accuracy:", avg_fact_accuracy)
+    print("Average Category Accuracy:", avg_accuracy*100)
+    print("Average Fact Accuracy:", avg_fact_accuracy*100)
     print("Average BLEU Score:", avg_bleu_score)
-    print("Average ROUGE Score:", avg_rogue_score)
+    # print("Average ROUGE Score:", avg_rogue_score)
     print("Average Trace Length:", avg_trace_length)
 
 if __name__ == "__main__":
     
-    adapter_name = 'Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts_default.json'
+    # adapter_name = 'Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts-perturbed_default.json'
+    adapter_names = "Qwen3-1.7B-sft-adapter-reasoning-facts-perturbed_default.json" , "Qwen3-1.7B-sft-adapter-reasoning-facts_default.json", "Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts-perturbed_default.json", "Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts_default.json"
     
-    main(adapter_name)
+    for adapter_name in adapter_names:
+        print('\n\n')
+        print("="*50)
+        print(f"Evaluating adapter: {adapter_name}")
+        main(adapter_name)
