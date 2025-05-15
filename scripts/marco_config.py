@@ -1,3 +1,4 @@
+import ast
 import argparse
 import os
 import itertools
@@ -26,7 +27,7 @@ def get_prompts(all_inputs, template):
     """
     all_outputs = []
     for input in all_inputs:
-        fact_str = "\n".join(input['facts'])
+        fact_str = input['passages']
         output = template.format(
             fact=fact_str,
             question=input['question']
@@ -165,11 +166,13 @@ def evaluate_model(all_data, mode):
     count = 0
     
     for data in all_data:
-        golds = data['answers']
+        golds = ast.literal_eval(data['gold'])
         golds = [ans.lower() for ans in golds]
 
         prediction = data['prediction'].lower()
-        if 'cot' in mode:
+        if 'no answer present' in golds[0]:
+            prediction = prediction  
+        elif 'cot' in mode:
             if 'therefore the answer is' not in prediction:
                 prediction = 'answer'
             else:
@@ -184,16 +187,15 @@ def evaluate_model(all_data, mode):
         elif '<answer>' in prediction:
             prediction = prediction.split('<answer>')[1]
 
-        question = data['question'].lower()
-
         shot = False
 
         predict = []
 
-        ans = golds
-        if ans in prediction:
-            prediction = prediction.replace(ans, '')
-            shot = True
+        golds
+        for ans in golds:
+            if ans in prediction:
+        
+                shot = True
 
         if shot:
             predict = [prediction]
