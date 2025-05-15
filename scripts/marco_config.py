@@ -172,11 +172,19 @@ def evaluate_model(all_data, mode):
         prediction = data['prediction'].lower()
         if 'no answer present' in golds[0]:
             prediction = prediction  
+            if '<answer>' in prediction:
+                prediction = prediction.split('<answer>')[1]
+            if '</answer>' in prediction:
+                prediction = prediction.split('</answer>')[0]
         elif 'cot' in mode:
             if 'therefore the answer is' not in prediction:
                 prediction = 'answer'
             else:
                 prediction = prediction.split('therefore the answer is')[1].split('answer the question based on')[0]
+        elif '<answer>' in prediction:
+            prediction = prediction.split('<answer>')[1]
+            if '</answer>' in prediction:
+                prediction = prediction.split('</answer>')[0]        
         elif 'answer the question based on' in prediction:
             prediction = prediction.split('answer the question based on')[0]
         elif ' answer ' in prediction:
@@ -184,8 +192,11 @@ def evaluate_model(all_data, mode):
         # Adding for SFT models, need to check for other models in prompting
         elif 'answer:' in prediction:
             prediction = prediction.split('answer:')[1]
-        elif '<answer>' in prediction:
-            prediction = prediction.split('<answer>')[1]
+            
+        if 'assistant' in prediction:
+            prediction = prediction.replace('assistant', '')
+        if 'think' in prediction:
+            prediction = prediction.replace('think', '')
 
         shot = False
 
