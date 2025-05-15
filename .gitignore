@@ -5,7 +5,7 @@ models/
 wandb*
 slurm*
 *.pyc
-results/Cotempqa/evaluation_outputs/
+results/Cotempqa/*evaluation_outputs/
 .gitignore
 /train_dataset.json
 /test_dataset.json
