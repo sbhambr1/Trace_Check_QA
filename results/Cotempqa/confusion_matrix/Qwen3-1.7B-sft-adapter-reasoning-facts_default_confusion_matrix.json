@@ -1,0 +1,25 @@
+{
+    "accuracies": {
+        "category_accuracy": 608.0,
+        "fact_accuracy": 744.0,
+        "answer_accuracy": 510.0
+    },
+    "matrix1": {
+        "correct_answer_correct_category": 372.0,
+        "correct_answer_incorrect_category": 137.0,
+        "incorrect_answer_correct_category": 236.0,
+        "incorrect_answer_incorrect_category": 204.0
+    },
+    "matrix2": {
+        "correct_answer_correct_fact": 379.0,
+        "correct_answer_incorrect_fact": 130.0,
+        "incorrect_answer_correct_fact": 365.0,
+        "incorrect_answer_incorrect_fact": 75.0
+    },
+    "matrix3": {
+        "correct_answer_correct_trace": 261.0,
+        "correct_answer_incorrect_trace": 248.0,
+        "incorrect_answer_correct_trace": 195.0,
+        "incorrect_answer_incorrect_trace": 245.0
+    }
+}
