@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 import argparse
-from scripts.marco_config import *
+from marco_config import *
 import os
 import sys
 from vllm import LLM, SamplingParams
@@ -28,10 +28,23 @@ def evaluate_marcoqa(model_name, data_path, mode, output_dir, evaluate_result_di
     """
     all_data = []
     data_csv_path = os.path.join(os.getcwd() + '/', data_path)
-    with open(data_csv_path, 'r', encoding='utf-8') as f:
-        for line in f.readlines():
-            data = json.loads(line.strip())
-            all_data.append(data)
+    df = pd.read_csv(data_csv_path, sep=',', encoding='utf-8')
+    for _, row in df.iterrows():
+        data = {
+            'question': row['question'],
+            'answers': row['answers'],
+            'query': row['query'],
+            'query_type': row['query_type'],
+            'passages': row['passages'],
+            'reasoning': row['reasoning'],
+            'answer_passage': row['answer_passage'],
+        }
+        all_data.append(data)
+    
+    # with open(data_csv_path, 'r', encoding='utf-8') as f:
+    #     for line in f.readlines():
+    #         data = json.loads(line.strip())
+    #         all_data.append(data)
 
     if mode == 'default':
         all_prompts = get_prompts(all_data, default_template)

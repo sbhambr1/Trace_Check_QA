@@ -23,7 +23,7 @@ modes=("default")
 for mode in "${modes[@]}"; do
     CUDA_VISIBLE_DEVICES="$device" python scripts/marco_inference.py \
         --model_name "$model_name" \
-        --data_path "data/marcoqa/sft_dataset_chat_template/test.csv" \ 
+        --data_path "data/marcoqa/sft_dataset_chat_template/test.csv" \
         --mode "$mode" \
         --output_dir "results/marcoqa/evaluation_outputs/${mode}/" \
         --evaluate_result_dir "results/marcoqa/evaluation_results/${mode}/"
