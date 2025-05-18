@@ -14,6 +14,43 @@ builtins.print = rich_print
 warnings.filterwarnings("ignore")
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+def check_in_test_set(line, test_csv_path):
+    """
+    Check if the line is in the test set.
+    
+    Parameters:
+    line (str): The line to check.
+    test_csv_path (str): Path to the test set CSV file.
+    
+    Returns:
+    int: 1 if in test set, 0 otherwise.
+    """
+    data = json.loads(line)
+    df = pd.read_csv(test_csv_path)
+    for index, row in df.iterrows():
+        if str(data['answer']) == row['answer']:
+            return 1
+    return 0
+
+def get_data_from_json(data, data_path):
+    """
+    Get data from a JSON file.
+    
+    Parameters:
+    data (dict): The data to extract.
+    data_path (str): Path to the JSON file.
+    
+    Returns:
+    dict: Extracted data.
+    """
+    with open(data_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = json.loads(line)
+            if str(line['answer']) == data['answer']:
+                data = line
+                break
+            
+    return data 
 
 def evaluate_cotemporal(model_name, data_path, mode, output_dir, evaluate_result_dir):
     """
@@ -28,10 +65,23 @@ def evaluate_cotemporal(model_name, data_path, mode, output_dir, evaluate_result
     """
     all_data = []
     data_path = os.path.join(os.getcwd() + '/', data_path)
-    with open(data_path, 'r', encoding='utf-8') as f:
-        for line in f:
-            data = json.loads(line)
-            all_data.append(data)
+    category = data_path.split('/')[-1].split('.json')[0]
+    test_csv_path = os.path.join(os.getcwd(), 'data/cotempqa/sft_dataset_chat_template', f'{category}_test.csv')
+    df = pd.read_csv(test_csv_path)
+    for _, row in df.iterrows():
+        data = {
+            'answer': row['answer'],
+        }
+        data = get_data_from_json(data, data_path)
+        all_data.append(data)
+    
+    # with open(data_path, 'r', encoding='utf-8') as f:
+    #     for line in f:
+    #         flag = check_in_test_set(line, test_csv_path)
+    #         if flag == 0:
+    #             continue
+    #         data = json.loads(line)
+    #         all_data.append(data)
 
     if mode == 'default':
         all_prompts = get_prompts(all_data, default_template)

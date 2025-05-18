@@ -18,7 +18,7 @@ model_name=$1
 device=$2
 
 data_types=("mix" "equal" "during" "overlap")
-modes=("default" "few_shot_cot" "few_shot")
+modes=("default")
 
 for data_type in "${data_types[@]}"; do
     for mode in "${modes[@]}"; do
