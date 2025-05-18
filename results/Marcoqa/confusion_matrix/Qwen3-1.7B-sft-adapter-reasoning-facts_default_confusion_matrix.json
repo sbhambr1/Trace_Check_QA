@@ -1,26 +1,26 @@
 {
     "accuracies": {
-        "unevaluated": 23,
-        "category_accuracy": 2.0,
-        "fact_accuracy": 91.0,
-        "answer_accuracy": 10.0
+        "unevaluated": 0,
+        "category_accuracy": 604.0,
+        "fact_accuracy": 406.0,
+        "answer_accuracy": 263.0
     },
     "matrix1": {
-        "correct_answer_correct_category": 0.0,
-        "correct_answer_incorrect_category": 10.0,
-        "incorrect_answer_correct_category": 2.0,
-        "incorrect_answer_incorrect_category": 965.0
+        "correct_answer_correct_category": 85.0,
+        "correct_answer_incorrect_category": 178.0,
+        "incorrect_answer_correct_category": 519.0,
+        "incorrect_answer_incorrect_category": 218.0
     },
     "matrix2": {
-        "correct_answer_correct_fact": 0.0,
-        "correct_answer_incorrect_fact": 10.0,
-        "incorrect_answer_correct_fact": 91.0,
-        "incorrect_answer_incorrect_fact": 876.0
+        "correct_answer_correct_fact": 25.0,
+        "correct_answer_incorrect_fact": 238.0,
+        "incorrect_answer_correct_fact": 381.0,
+        "incorrect_answer_incorrect_fact": 356.0
     },
     "matrix3": {
-        "correct_answer_correct_trace": 0.0,
-        "correct_answer_incorrect_trace": 10.0,
-        "incorrect_answer_correct_trace": 0.0,
-        "incorrect_answer_incorrect_trace": 967.0
+        "correct_answer_correct_trace": 25.0,
+        "correct_answer_incorrect_trace": 238.0,
+        "incorrect_answer_correct_trace": 338.0,
+        "incorrect_answer_incorrect_trace": 399.0
     }
 }
