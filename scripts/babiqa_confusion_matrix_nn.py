@@ -209,9 +209,9 @@ def main(adapter_name):
 
 if __name__ == "__main__":
     
-    # adapter_names = "Qwen3-1.7B-sft-adapter-reasoning-facts-perturbed_default.json" , "Qwen3-1.7B-sft-adapter-reasoning-facts_default.json", "Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts-perturbed_default.json", "Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts_default.json"
+    adapter_names = "Qwen3-1.7B-sft-adapter-reasoning-facts-perturbed_default.json" , "Qwen3-1.7B-sft-adapter-reasoning-facts_default.json", "Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts-perturbed_default.json", "Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts_default.json"
     
-    adapter_names = "Qwen3-1.7B-sft-adapter-reasoning-facts_default.json", "Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts_default.json"
+    # adapter_names = "Qwen3-1.7B-sft-adapter-reasoning-facts_default.json", "Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts_default.json"
     
     for adapter_name in adapter_names:
         print('\n\n')
