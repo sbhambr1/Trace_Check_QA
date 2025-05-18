@@ -5,7 +5,7 @@
 #SBATCH --mem=80G     # request 120 GB of memory
 #SBATCH --partition general
 #SBATCH --gres=gpu:a100:1
-#SBATCH --time 1:00:00 
+#SBATCH --time 3:00:00 
 
 # module load cuda/11.8
 
