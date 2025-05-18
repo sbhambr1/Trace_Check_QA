@@ -20,9 +20,9 @@ device=$2
 modes=("default")
 
 for mode in "${modes[@]}"; do
-    CUDA_VISIBLE_DEVICES="$device" python scripts/babi_inference.py \
+    CUDA_VISIBLE_DEVICES="$device" python scripts/babiqa_inference.py \
         --model_name "$model_name" \
-        --data_path "data/babiqa/sft_dataset_chat_template/test.csv"" \
+        --data_path "data/babiqa/sft_dataset_chat_template/test.csv" \
         --mode "$mode" \
         --output_dir "results/babiqa/evaluation_outputs/${mode}/" \
         --evaluate_result_dir "results/babiqa/evaluation_results/${mode}/"

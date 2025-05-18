@@ -6,7 +6,7 @@ import torch
 import argparse
 import warnings
 import argparse
-from babiqa_config import *
+from marco_config import *
 
 warnings.filterwarnings("ignore")
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -17,7 +17,7 @@ def evaluate_marco_sft_model(
     mode: str = "default",
 ):  
     
-    input_path = os.path.join(os.getcwd() + '/results/Babiqa/evaluation_outputs/')
+    input_path = os.path.join(os.getcwd() + '/results/Marcoqa/evaluation_outputs/')
     result_file = os.path.join(input_path, f"{adapter_path}_{mode}.json")
     
     evaluate_result_dir = "results/Babiqa/evaluation_results/"
@@ -47,7 +47,7 @@ def evaluate_marco_sft_model(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate the BabiQA SFT model saved results.") 
     parser.add_argument("--model_name", type=str, default="Qwen/Qwen3-1.7B", help="Base model ID.") # meta-llama/Llama-3.2-1B-Instruct, Qwen/Qwen3-1.7B
-    parser.add_argument("--adapter_path", type=str, default="Qwen3-1.7B-sft-adapter", help="SFT model adapter dir path.")
+    parser.add_argument("--adapter_path", type=str, default="Qwen3-1.7B-sft-adapter-reasoning-facts", help="SFT model adapter dir path.")
     parser.add_argument("--mode", type=str, default="default", help="Mode for evaluation.")
     
     args = parser.parse_args()
