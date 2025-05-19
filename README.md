@@ -1,14 +1,12 @@
-# Solving Temporal Constraint QA with LLMs
+# Invesitgating Trace-based Knowledge Distillation
 
 ## Installation
 
 ```bash
 # Clone the repository
-conda create -n temporal python=3.10
-cd temporal_llms
+conda create -n trace_kd python=3.10
+cd trace_kd
 pip install -r requirements.txt
-cd ./alignment-handbook/
-python -m pip install .
 cd ..
 ```
 
