@@ -22,7 +22,7 @@ conda install -c conda-forge cudatoolkit-dev -y
 
 ```bash
 # example
-python inference.py \
+python scripts/cotempqa_inference.py \
     --model_name meta-llama/Llama-3.2-1B \
     --data_path data/cotempqa/mix.json \
     --mode default \
@@ -34,7 +34,7 @@ python inference.py \
 
 ```bash
 # example
-python create_sft_dataset.py \
+python scripts/cotempqa_create_sft_dataset.py \
     --csv_path data/cotempqa/dataset_with_labels.csv \
     --input_col question \
     --output_col answer \
@@ -45,7 +45,7 @@ python create_sft_dataset.py \
 
 ```bash
 # example
-python create_sft_dataset.py \
+python scripts/cotempqa_create_sft_dataset.py \
     --csv_path data/cotempqa/dataset_with_labels.csv \
     --input_col question \
     --output_col answer \
