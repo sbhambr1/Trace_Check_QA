@@ -5,7 +5,8 @@
 ```bash
 # Clone the repository
 conda create -n trace_kd python=3.10
-cd trace_kd
+conda activate trace_kd
+cd Trace_Check_QA
 pip install -r requirements.txt
 cd ..
 ```
