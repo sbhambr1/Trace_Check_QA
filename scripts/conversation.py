@@ -94,7 +94,7 @@ class Conversation:
                 model=self.llm_model,
                 messages = message,
                 temperature=self.temp,
-                max_tokens=100,
+                max_tokens=200,
                 top_p=1,
                 frequency_penalty=0,
                 presence_penalty=0,
