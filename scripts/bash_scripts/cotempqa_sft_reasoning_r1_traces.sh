@@ -12,7 +12,7 @@
 eval "$(conda shell.bash hook)"
 conda activate temporal
 
-git checkout main
+git checkout r1/cotemp
 
 # cd /home/sbhambr1/research/temporal_llms/temporal_llms/
 
