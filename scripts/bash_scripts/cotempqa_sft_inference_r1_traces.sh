@@ -25,7 +25,7 @@ model_id=$1
 model_name="${model_id#*/}"
 
 for mode in "${modes[@]}"; do
-    python scripts/cotempqa_sft_inference_fixed.py \
+    python scripts/cotempqa_sft_inference_r1.py \
         --model_name "${model_id}" \
         --adapter_path "cotempqa/${model_name}-sft-adapter-reasoning-r1-traces" \
         --mode "$mode"
