@@ -7,6 +7,7 @@ import sys
 import warnings
 from openai import OpenAI
 import time
+from tqdm import tqdm
 
 warnings.filterwarnings("ignore")
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -15,6 +16,7 @@ class DeepSeekR1:
     def __init__(self):
         self.api_key = os.getenv('DEEPSEEK_API')
         self.client = OpenAI(api_key=self.api_key, base_url="https://api.deepseek.com")
+        self.none_errors = 0
         
     def query(self, question, retries=3, wait_time=5):
         for attempt in range(retries):
@@ -31,7 +33,8 @@ class DeepSeekR1:
                 if attempt < retries - 1:
                     time.sleep(wait_time)
                 else:
-                    raise e
+                    self.none_errors += 1
+                    return None
                     
     def generate(self, all_prompts):
         """
@@ -45,12 +48,18 @@ class DeepSeekR1:
         """
         all_outputs_answers = []
         all_outputs_traces = []
-        for prompt in all_prompts:
+        for prompt in tqdm(all_prompts):
             response = self.query(prompt)
+            if response is None:
+                all_outputs_answers.append("None")
+                all_outputs_traces.append("None")
+                continue
             r1_trace = response.reasoning_content
             r1_answer = response.content
             all_outputs_answers.append(r1_answer)
             all_outputs_traces.append(r1_trace)
+            
+        print(f"Total None Errors: {self.none_errors}")
         return all_outputs_answers, all_outputs_traces
 
 def check_in_test_set(line, test_csv_path):
@@ -103,16 +112,28 @@ def evaluate_cotemporal(data_path, mode, output_dir, evaluate_result_dir):
     """
     all_data = []
     data_path = os.path.join(os.getcwd() + '/', data_path)
-    category = data_path.split('/')[-1].split('.json')[0]
-    test_csv_path = os.path.join(os.getcwd(), 'data/cotempqa/sft_dataset_chat_template', f'{category}_test.csv')
-    df = pd.read_csv(test_csv_path)
-    for _, row in df.iterrows():
-        data = {
-            'answer': row['answer'],
-        }
-        data = get_data_from_json(data, data_path)
-        all_data.append(data)
-
+    # category = data_path.split('/')[-1].split('.json')[0]
+    # test_csv_path = os.path.join(os.getcwd(), 'data/cotempqa/sft_dataset_chat_template', f'{category}_test.csv')
+    # df = pd.read_csv(test_csv_path)
+    # for _, row in df.iterrows():
+    #     data = {
+    #         'answer': row['answer'],
+    #     }
+    #     data = get_data_from_json(data, data_path)
+    #     all_data.append(data)
+        
+    # with open(data_path, 'r', encoding='utf-8') as f:
+    #     for line in f:
+    #         flag = check_in_test_set(line, test_csv_path)
+    #         if flag == 0:
+    #             continue
+    #         data = json.loads(line)
+    #         all_data.append(data)
+    
+    with open(data_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            data = json.loads(line)
+            all_data.append(data)
 
     if mode == 'default':
         all_prompts = get_prompts(all_data, default_template)
