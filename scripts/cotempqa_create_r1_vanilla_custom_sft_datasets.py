@@ -102,6 +102,15 @@ def main():
                         if output_text in og_answer:
                             message = row['messages']
                             break
+                        
+                    new_row = pd.DataFrame([{
+                        'index': None, # Placeholder for index, can be set later
+                        'question': input_text,
+                        'reasoning': None,
+                        'answer': output_text,
+                        'messages': message
+                    }])
+                    train_df = pd.concat([train_df, new_row], ignore_index=True)
         
             
             if vanilla_sft:
