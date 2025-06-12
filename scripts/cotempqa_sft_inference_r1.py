@@ -181,7 +181,7 @@ def evaluate_cotemporal_sft_model(
     merged_model = merged_model.merge_and_unload()
     
     data_paths = ["./data/cotempqa/mix.json", "./data/cotempqa/equal.json", "./data/cotempqa/overlap.json", "./data/cotempqa/during.json"]
-    
+
     for data_path in data_paths:
         evaluate_model_all_data(
             model_name=base_model_id,
