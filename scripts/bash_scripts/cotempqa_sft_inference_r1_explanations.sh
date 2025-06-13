@@ -5,7 +5,7 @@
 #SBATCH --mem=80G     # request 120 GB of memory
 #SBATCH --partition general
 #SBATCH --gres=gpu:a100:1
-#SBATCH --time 3:00:00 
+#SBATCH --time 4:00:00 
 
 # module load cuda/11.8
 
@@ -27,6 +27,6 @@ model_name="${model_id#*/}"
 for mode in "${modes[@]}"; do
     python scripts/cotempqa_sft_inference_r1.py \
         --model_name "${model_id}" \
-        --adapter_path "cotempqa/${model_name}-sft-adapter-reasoning-summarized-r1-traces" \
+        --adapter_path "cotempqa/${model_name}-sft-adapter-reasoning-r1-explanations" \
         --mode "$mode"
 done
