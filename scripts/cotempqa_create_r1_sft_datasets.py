@@ -39,8 +39,8 @@ def merge_category_csvs(output_dir):
 def main():
     
     vanilla_r1 = False
-    summarized_r1 = True
-    explanation_r1 = False
+    summarized_r1 = False
+    explanation_r1 = True
     
     categories = ['overlap', 'during', 'mix', 'equal']
     for category in categories:
