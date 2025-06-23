@@ -79,6 +79,37 @@ class Conversation:
         input_tokens = self.count_tokens(message[0]['content'],  'cl100k_base')
         self.total_cost += self.input_token_cost * input_tokens
         return message
+    
+    def get_multi_turn_response(self, problem, r1_trace, r1_answer, prompt):
+        
+        message=[
+                {"role": "user", "content": problem},
+                {"role": "assistant", "content": r1_trace},
+                {"role": "assistant", "content": r1_answer},
+                {"role": "user", "content": prompt}
+        ]
+        if self.llm_model == "gpt-3.5-turbo" or self.llm_model == "gpt-4o-mini" or self.llm_model == "gpt-4o": 
+        
+            if self.total_cost > self.cost_limit:
+                return {"response_message": "[WARNING] COST LIMIT REACHED!"}
+            else:
+                response = self.client.chat.completions.create(
+                model=self.llm_model,
+                messages = message,
+                temperature=self.temp,
+                max_tokens=200,
+                top_p=1,
+                frequency_penalty=0,
+                presence_penalty=0,
+                stop=["END"]
+                )
+
+            answer = response.choices[0].message.content
+        
+        self.log_history.append(answer)
+        self.llm_prompt.append(prompt + answer + "\n")
+        return answer
+        
 
     def get_response(self, prompt, stop=None, temperature=0, role="user"): 
         # chat model       
@@ -94,7 +125,7 @@ class Conversation:
                 model=self.llm_model,
                 messages = message,
                 temperature=self.temp,
-                max_tokens=100,
+                max_tokens=200,
                 top_p=1,
                 frequency_penalty=0,
                 presence_penalty=0,

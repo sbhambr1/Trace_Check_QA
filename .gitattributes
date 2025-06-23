@@ -1,3 +1,4 @@
 data/OpenThoughts/sft_dataset_perturbed_reasoning/train.csv filter=lfs diff=lfs merge=lfs -text
 data/OpenThoughts/sft_dataset_r1_traces/train.csv filter=lfs diff=lfs merge=lfs -text
 *.csv filter=lfs diff=lfs merge=lfs -text
+*.json filter=lfs diff=lfs merge=lfs -text
