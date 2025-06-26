@@ -114,35 +114,23 @@ def train_sft(
             sample["messages"] = [{"role": "system", "content": system_message}] + sample["messages"]
             return sample
 
-    # Map dataset types to huggingface dataset names or local files
+    # Map dataset types to huggingface dataset names
     dataset_mapping = {
         "r1_trace": "sbhambr1/openthoughts_sft_r1_traces",
         "explanation": "sbhambr1/openthoughts_sft_explanations",
         "summary": "sbhambr1/openthoughts_sft_summaries",
-        "no_reasoning": "sbhambr1/openthoughts_sft_no_reasoning",
+        "no_reasoning": "sbhambr1/openthoughts_sft_no_reasoning", 
         "perturbed_reasoning": "sbhambr1/openthoughts_sft_perturbed_reasoning"
-    }
-    local_paths = {
-        "r1_trace": "data/OpenThoughts/sft_dataset_r1_traces/train.csv",
-        "explanation": "data/OpenThoughts/sft_dataset_explanations/train.csv",
-        "summary": "data/OpenThoughts/sft_dataset_summaries/train.csv",
-        "no_reasoning": "data/OpenThoughts/sft_dataset_no_reasoning/train.csv",
-        "perturbed_reasoning": "data/OpenThoughts/sft_dataset_perturbed_reasoning/train.csv"
     }
     if dataset_type not in dataset_mapping:
         raise ValueError(f"Invalid dataset_type: {dataset_type}. Must be one of {list(dataset_mapping.keys())}")
     dataset_name = dataset_mapping[dataset_type]
-    print(f"Loading OpenThoughts {dataset_type} dataset...")
-    # Load dataset from the hub if available, else from local files
-    if dataset_name is not None:
-        try:
-            dataset = load_dataset(dataset_name, data_files={"train": "train.csv"})
-        except Exception as e:
-            print(f"Error loading dataset from HuggingFace Hub: {e}")
-            print("Falling back to local files...")
-            dataset = load_dataset("csv", data_files={"train": local_paths[dataset_type]})
-    else:
-        dataset = load_dataset("csv", data_files={"train": local_paths[dataset_type]})
+    print(f"Loading OpenThoughts {dataset_type} dataset from HuggingFace Hub...")
+    # Only load from HuggingFace Hub, raise error if not accessible
+    try:
+        dataset = load_dataset(dataset_name)
+    except Exception as e:
+        raise RuntimeError(f"Error loading dataset '{dataset_name}' from HuggingFace Hub: {e}")
     
     # Parse the "messages" column as a list
     dataset = dataset.map(parse_messages_column, batched=False)
@@ -174,7 +162,6 @@ def train_sft(
     
     print(f"Training dataset size: {len(train_dataset)}")
     print(f"Evaluation dataset size: {len(eval_dataset)}")
-
     # --- Load Tokenizer ---
     print(f"Loading tokenizer for {base_model_id}...")
     tokenizer = AutoTokenizer.from_pretrained(base_model_id, trust_remote_code=True)
