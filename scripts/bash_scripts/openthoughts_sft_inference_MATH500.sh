@@ -13,7 +13,7 @@ eval "$(conda shell.bash hook)"
 conda activate temporal
 
 model_id=$1
-dataset_type="MATH500"
+dataset_type=$2
 
 if [ -z "$model_id" ]; then
     echo "Usage: $0 <model_id> [max_new_tokens]"
