@@ -27,4 +27,4 @@ adapter_path="models/openthoughts/${model_name}-sft-adapter-${dataset_type}/fina
 python scripts/openthoughts_sft_inference_AIME2024.py \
   --model_name "$model_name" \
   --adapter_path "$adapter_path" \
-  --max_new_tokens "${2:-32768}"
+  --max_new_tokens 32768
