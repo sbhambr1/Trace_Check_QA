@@ -48,7 +48,7 @@ python scripts/openthoughts_sft_training.py \
     --output_dir "openthoughts/${model_name}-sft-adapter-${dataset_type}" \
     --hf_token $hf_token \
     --wandb_token $wandb_token \
-    --epochs 3 \
+    --epochs 1 \
     --batch_size 4 \
     --grad_accum 4 \
     --lr 1e-5 \

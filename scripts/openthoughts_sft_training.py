@@ -242,11 +242,12 @@ def train_sft(
         warmup_ratio=0.1,
         gradient_checkpointing=gradient_checkpointing,
         eval_strategy="steps",
-        eval_steps=0.2, # Evaluate every 20% of the steps
+        eval_steps=50, # Evaluate every 20% of the steps
         remove_unused_columns=False,
         load_best_model_at_end=True,
         metric_for_best_model="eval_loss",
         greater_is_better=False,
+        #max_seq_length=max_seq_length,
     )
 
     # --- Initialize SFTTrainer ---
@@ -257,7 +258,7 @@ def train_sft(
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
         peft_config=peft_config,
-        max_seq_length=max_seq_length,
+        
     )
     
     if training_args.gradient_checkpointing:
