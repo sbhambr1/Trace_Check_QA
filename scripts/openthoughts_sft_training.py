@@ -275,7 +275,7 @@ def train_sft(
     trainer.save_metrics("train", metrics)
 
     print("Saving final LoRA adapter...")
-    final_adapter_path = os.path.join(f"models/{output_dir}-{dataset_type}", "final_adapter")
+    final_adapter_path = os.path.join(f"models/{output_dir}", "final_adapter")
     trainer.model.save_pretrained(final_adapter_path)
     tokenizer.save_pretrained(final_adapter_path)
     print(f"Training complete. Final LoRA adapter saved to {final_adapter_path}")
