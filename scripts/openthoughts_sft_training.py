@@ -224,7 +224,7 @@ def train_sft(
     # --- Configure Training Arguments ---
     print("Setting up training arguments...")
     training_args = TrainingArguments(
-        output_dir=f"models/{output_dir}-{dataset_type}",
+        output_dir=f"models/{output_dir}",
         per_device_train_batch_size=batch_size,
         per_device_eval_batch_size=batch_size,
         gradient_accumulation_steps=gradient_accumulation_steps,

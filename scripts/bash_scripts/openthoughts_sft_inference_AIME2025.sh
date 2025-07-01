@@ -25,6 +25,6 @@ adapter_path="models/openthoughts/${model_name}-sft-adapter-${dataset_type}/fina
 
 # Inference script for AIME2025 datasets (I and II)
 python scripts/openthoughts_sft_inference_AIME2025.py \
-  --model_name "model_id" \
+  --model_name "$model_id" \
   --adapter_path "$adapter_path" \
   --max_new_tokens 32768
