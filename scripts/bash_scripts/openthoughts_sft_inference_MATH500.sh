@@ -25,6 +25,6 @@ adapter_path="models/openthoughts/${model_name}-sft-adapter-${dataset_type}/fina
 
 # Inference script for MATH500 dataset
 python scripts/openthoughts_sft_inference_MATH500.py \
-  --model_name "$model_name" \
+  --model_name "model_id" \
   --adapter_path "$adapter_path" \
   --max_new_tokens 32768
