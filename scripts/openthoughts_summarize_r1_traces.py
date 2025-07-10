@@ -25,9 +25,9 @@ def main():
     ds = load_dataset("open-thoughts/OpenThoughts-114k", "metadata", split="train")
     seed = 42
     ds.shuffle(seed=seed)
-    data = ds.filter(lambda x: x['domain'] == 'math')[:3000]
+    data = ds.filter(lambda x: x['domain'] == 'math')[:10000]
     
-    for i in tqdm(range(3000)):
+    for i in tqdm(range(10000)):
         problem = data['problem'][i]
         deepseek_trace = data['deepseek_reasoning'][i]
         deepseek_solution = data['deepseek_solution'][i]
