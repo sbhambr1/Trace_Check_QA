@@ -2,10 +2,10 @@
 
 #SBATCH --cpus-per-task=32
 #SBATCH -N 1
-#SBATCH --mem=80G
+#SBATCH --mem=200G
 #SBATCH --partition general
 #SBATCH --gres=gpu:a100:1
-#SBATCH --time 4:00:00
+#SBATCH --time 6:00:00
 
 # module load cuda-11.7.0-gcc-11.2.0
 
