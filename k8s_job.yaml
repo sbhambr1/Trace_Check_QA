@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: temporal-llms-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: temporal-llms-container
+        image: <YOUR_DOCKER_IMAGE>
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: "4"
+            memory: "16Gi"
+          limits:
+            cpu: "8"
+            memory: "32Gi"
+        volumeMounts:
+        - name: sf-storage
+          mountPath: /app/data
+      restartPolicy: Never
+      volumes:
+      - name: sf-storage
+        persistentVolumeClaim:
+          claimName: sf-pvc
+  backoffLimit: 4
