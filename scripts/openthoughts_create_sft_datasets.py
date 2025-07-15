@@ -237,12 +237,12 @@ def main():
     )
     parser.add_argument(
         '--base-json',
-        default='results/OpenThoughts/deepseek_r1_with_explanation_gpt-4o-mini.json',
+        default='results/OpenThoughts/deepseek_r1_with_explanation_gpt-4o-mini_10k.json',
         help='Path to the base JSON file (contains r1_trace and explanation)'
     )
     parser.add_argument(
         '--summary-json', 
-        default='results/OpenThoughts/deepseek_r1_with_summary_gpt-4o-mini.json',
+        default='results/OpenThoughts/deepseek_r1_with_summary_gpt-4o-mini_10k.json',
         help='Path to the summary JSON file (contains r1_trace_summary)'
     )
     parser.add_argument(
@@ -274,34 +274,34 @@ def main():
         'r1_trace': {
             'file': args.base_json,
             'reasoning_key': 'r1_trace',
-            'output_subdir': 'sft_dataset_r1_traces',
+            'output_subdir': 'sft_dataset_r1_traces_10k',
             'description': 'R1 Trace Dataset',
             'type': 'standard'
         },
         'explanation': {
             'file': args.base_json,
             'reasoning_key': 'explanation', 
-            'output_subdir': 'sft_dataset_explanations',
+            'output_subdir': 'sft_dataset_explanations_10k',
             'description': 'Explanation Dataset',
             'type': 'standard'
         },
         'summary': {
             'file': args.summary_json,
             'reasoning_key': 'r1_trace_summary',
-            'output_subdir': 'sft_dataset_summaries', 
+            'output_subdir': 'sft_dataset_summaries_10k',
             'description': 'Summary Dataset',
             'type': 'standard'
         },
         'no_reasoning': {
             'file': args.base_json,
-            'output_subdir': 'sft_dataset_no_reasoning',
+            'output_subdir': 'sft_dataset_no_reasoning_10k',
             'description': 'No Reasoning Dataset',
             'type': 'no_reasoning'
         },
         'perturbed_reasoning': {
             'file': args.base_json,
             'reasoning_key': 'r1_trace',
-            'output_subdir': 'sft_dataset_perturbed_reasoning',
+            'output_subdir': 'sft_dataset_perturbed_reasoning_10k',
             'description': 'Perturbed Reasoning Dataset',
             'type': 'perturbed'
         }
