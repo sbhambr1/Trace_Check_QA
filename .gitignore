@@ -8,3 +8,4 @@ slurm*
 .gitignore
 /train_dataset.json
 /test_dataset.json
+*.yaml
