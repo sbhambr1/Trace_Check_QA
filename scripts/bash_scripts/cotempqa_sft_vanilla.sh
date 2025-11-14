@@ -3,7 +3,7 @@
 #SBATCH --cpus-per-task=32     # number of TASKS
 #SBATCH -N 1     # keep all tasks on the same node
 #SBATCH --mem=80G     # request 120 GB of memory
-#SBATCH --partition general
+#SBATCH --partition public
 #SBATCH --gres=gpu:a100:1
 #SBATCH --time 3:00:00 
 
