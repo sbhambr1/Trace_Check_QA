@@ -15,6 +15,8 @@ from trl import SFTTrainer
 from huggingface_hub import login
 import wandb # Optional, for tracking
 
+torch.cuda.empty_cache()
+
 def seed_everything(seed: int):
     random.seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
@@ -23,8 +25,6 @@ def seed_everything(seed: int):
         torch.cuda.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
-    
-torch.cuda.empty_cache()
 
 def train_sft(
     expt_name: str, # Experiment name for logging
@@ -311,6 +311,8 @@ if __name__ == "__main__":
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
 
     args = parser.parse_args()
+
+    seed_everything(args.seed)
 
     train_sft(
         expt_name=args.expt_name,
