@@ -14,6 +14,15 @@ from peft import LoraConfig, get_peft_model, PeftModel
 from trl import SFTTrainer
 from huggingface_hub import login
 import wandb # Optional, for tracking
+
+def seed_everything(seed: int):
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
     
 torch.cuda.empty_cache()
 
@@ -299,6 +308,7 @@ if __name__ == "__main__":
     parser.add_argument("--lora_alpha", type=int, default=32, help="LoRA alpha.")
     parser.add_argument("--disable_qlora", action='store_true', help="Disable QLoRA (use fp16/bf16 instead).")
     parser.add_argument("--disable_flash_attention", action='store_true', help="Disable Flash Attention 2.")
+    parser.add_argument("--seed", type=int, default=42, help="Random seed")
 
     args = parser.parse_args()
 
