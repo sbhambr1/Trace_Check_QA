@@ -22,9 +22,11 @@ wandb_token=$WANDB_API_KEY
 
 model_id=$1
 model_name="${model_id#*/}"
+SEED="${2:-42}"   # default to 42 if not provided
 
 python scripts/cotempqa_sft_vanilla.py \
     --model_id "$model_id" \
     --expt_name "${model_name}-sft-cotempqa-3ep" \
     --output_dir "cotempqa/${model_name}-sft-adapter" \
     --wandb_token $wandb_token
+    --seed "$SEED"
