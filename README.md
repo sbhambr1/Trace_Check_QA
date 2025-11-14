@@ -5,7 +5,12 @@
 ```bash
 # Clone the repository
 conda create -n trace_kd python=3.10
+<<<<<<< HEAD
 cd trace_kd
+=======
+conda activate trace_kd
+cd Trace_Check_QA
+>>>>>>> 525620a5061f1b7a2c8f7a55e0c8d6a4ea51fff6
 pip install -r requirements.txt
 cd ..
 ```
@@ -76,4 +81,8 @@ sbatch ./scripts/bash_scripts/cotempqa_sft_inference.sh "meta-llama/Llama-3.2-1B
 
 # for SFT models with reasoning trace with only temporal relation
 sbatch ./scripts/bash_scripts/cotempqa_sft_inference.sh "meta-llama/Llama-3.2-1B-Instruct" True True
+<<<<<<< HEAD
 ```
+=======
+```
+>>>>>>> 525620a5061f1b7a2c8f7a55e0c8d6a4ea51fff6
