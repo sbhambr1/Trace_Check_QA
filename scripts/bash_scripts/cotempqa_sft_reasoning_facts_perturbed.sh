@@ -26,7 +26,7 @@ SEED="${2:-42}"   # default to 42 if not provided
 
 python scripts/cotempqa_sft_reasoning_facts_perturbed.py \
     --model_id "$model_id" \
-    --expt_name "${model_name}-sft-cotempqa-reasoning-facts-perturbed-3ep" \
-    --output_dir "cotempqa/${model_name}-sft-adapter-reasoning-facts-perturbed" \
+    --expt_name "${model_name}-sft-cotempqa-reasoning-facts-perturbed-3ep-${SEED}" \
+    --output_dir "cotempqa/${model_name}-sft-adapter-reasoning-facts-perturbed-${SEED}" \
     --wandb_token $wandb_token
     --seed "$SEED"
