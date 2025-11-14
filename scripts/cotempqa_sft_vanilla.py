@@ -14,6 +14,7 @@ from peft import LoraConfig, get_peft_model, PeftModel
 from trl import SFTTrainer
 from huggingface_hub import login
 import wandb # Optional, for tracking
+import random
 
 torch.cuda.empty_cache()
 
