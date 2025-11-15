@@ -3,7 +3,7 @@
 #SBATCH --cpus-per-task=32     # number of TASKS
 #SBATCH -N 1     # keep all tasks on the same node
 #SBATCH --mem=80G     # request 120 GB of memory
-#SBATCH --partition general
+#SBATCH --partition public
 #SBATCH --gres=gpu:a100:1
 #SBATCH --time 1:00:00 
 
@@ -31,6 +31,7 @@ model_name="${model_id#*/}"
 
 added_name=""
 adapter_name=""
+SEED="${4:-42}"   # default to 42 if not provided
 
 if [ "$with_reasoning" = "True" ]; then
     added_name="with_reasoning/"
@@ -45,6 +46,6 @@ fi
 for mode in "${modes[@]}"; do
     python scripts/cotempqa_sft_inference_fixed.py \
         --model_name "${model_id}" \
-        --adapter_path "cotempqa/${model_name}-sft-adapter${adapter_name}" \
+        --adapter_path "cotempqa/${model_name}-sft-adapter${adapter_name}-${SEED}" \
         --mode "$mode"
 done
