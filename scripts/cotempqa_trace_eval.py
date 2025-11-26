@@ -108,7 +108,7 @@ def main(adapter_name):
 
     for category in categories:
         
-        trace_eval_path = f'results/Cotempqa/cotempqa_evaluation_outputs/{category}/{adapter_name}'
+        trace_eval_path = f'results/Cotempqa/evaluation_outputs/{category}/{adapter_name}'
         if 'reasoning-facts' in adapter_name:
             golden_eval_path = f'data/cotempqa/sft_dataset_reasoning_with_facts_chat_template/{category}_test.csv'
         elif 'reasoning' in adapter_name:
@@ -138,10 +138,21 @@ def main(adapter_name):
 
 if __name__ == "__main__":
     
-    # adapter_name = 'Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts-perturbed_default.json'
-    adapter_names = "Qwen3-1.7B-sft-adapter-reasoning-facts-perturbed_default.json" , "Qwen3-1.7B-sft-adapter-reasoning-facts_default.json", "Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts-perturbed_default.json", "Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts_default.json"
+    adapter_names1 = "Llama-3.2-1B-Instruct-sft-adapter-121_default.json", "Llama-3.2-1B-Instruct-sft-adapter-122_default.json", "Llama-3.2-1B-Instruct-sft-adapter-123_default.json", "Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts-121_default.json", "Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts-122_default.json", "Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts-123_default.json", "Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts-perturbed-121_default.json", "Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts-perturbed-122_default.json", "Llama-3.2-1B-Instruct-sft-adapter-reasoning-facts-perturbed-123_default.json"
+    adapter_names2 = "	Qwen3-1.7B-sft-adapter-121_default.json", "Qwen3-1.7B-sft-adapter-122_default.json", "Qwen3-1.7B-sft-adapter-123_default.json", "Qwen3-1.7B-sft-adapter-reasoning-facts-121_default.json", "Qwen3-1.7B-sft-adapter-reasoning-facts-122_default.json", "Qwen3-1.7B-sft-adapter-reasoning-facts-123_default.json", "Qwen3-1.7B-sft-adapter-reasoning-facts-perturbed-121_default.json", "Qwen3-1.7B-sft-adapter-reasoning-facts-perturbed-122_default.json", "Qwen3-1.7B-sft-adapter-reasoning-facts-perturbed-123_default.json"
     
-    for adapter_name in adapter_names:
+    for adapter_name in adapter_names1:
+        print('\n\n')
+        print("="*50)
+        print(f"Evaluating adapter: {adapter_name}")
+        main(adapter_name)
+        
+    print('\n\n')
+    print("="*50)
+    print('\n\n')
+    print("="*50)
+    
+    for adapter_name in adapter_names2:
         print('\n\n')
         print("="*50)
         print(f"Evaluating adapter: {adapter_name}")
