@@ -1,4 +1,13 @@
-# Invesitgating Trace-based Knowledge Distillation
+# Interpretable Traces, Unexpected Outcomes: Investigating the Disconnect in Trace-Based Knowledge Distillation
+
+<h3 align="center">🎉 Accepted at <a href="https://2026.aclweb.org/">ACL 2026</a></h3>
+
+<p align="center">
+  <a href="https://github.com/sbhambr1/Trace_Check_QA"><img src="https://img.shields.io/badge/GitHub-Trace--Check--QA-black?logo=github"/></a>
+  <a href="https://hf.co/collections/sbhambr1/trace-check-qa-datasets"><img src="https://img.shields.io/badge/🤗%20Datasets-HuggingFace-yellow"/></a>
+</p>
+
+---
 
 ## Installation
 
@@ -20,6 +29,8 @@ cd ..
 ```bash
 conda install -c conda-forge cudatoolkit-dev -y
 ```
+
+---
 
 ## Usage
 
@@ -59,7 +70,7 @@ python create_sft_dataset.py \
     --reasoning_col label
 ```
 
-### Push data to your Huggingface and load that dataset in the SFT scripts accordingly. (Data will be made public later on.)
+### Push data to your Huggingface and load that dataset in the SFT scripts accordingly (or use the links provided).
 
 4. SFT on Cotempqa example using default settings with QLoRA for the CotempQA SFT dataset (input/output)
 
@@ -84,5 +95,17 @@ sbatch ./scripts/bash_scripts/cotempqa_sft_inference.sh "meta-llama/Llama-3.2-1B
 <<<<<<< HEAD
 ```
 =======
+## 📄 Citation
+
+If you use this work, please cite:
+
+```bibtex
+@inproceedings{bhambri2025tracecheckqa,
+  title     = {Interpretable Traces, Unexpected Outcomes: Investigating the Disconnect
+in Trace-Based Knowledge Distillation},
+  author    = {Bhambri, Siddhant and Biswas, Upasana and Kambhampati, Subbarao},
+  booktitle = {Proceedings of The 64th Annual Meeting of the Association for Computational Linguistics},
+  year      = {2026},
+  url       = {https://github.com/sbhambr1/Trace_Check_QA}
+}
 ```
->>>>>>> 525620a5061f1b7a2c8f7a55e0c8d6a4ea51fff6
