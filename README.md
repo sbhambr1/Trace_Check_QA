@@ -94,7 +94,9 @@ sbatch ./scripts/bash_scripts/cotempqa_sft_inference.sh "meta-llama/Llama-3.2-1B
 sbatch ./scripts/bash_scripts/cotempqa_sft_inference.sh "meta-llama/Llama-3.2-1B-Instruct" True True
 <<<<<<< HEAD
 ```
-=======
+
+---
+
 ## 📄 Citation
 
 If you use this work, please cite:
