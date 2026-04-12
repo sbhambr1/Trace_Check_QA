@@ -5,6 +5,8 @@
 <p align="center">
   <a href="https://github.com/sbhambr1/Trace_Check_QA"><img src="https://img.shields.io/badge/GitHub-Trace--Check--QA-black?logo=github"/></a>
   <a href="https://hf.co/collections/sbhambr1/trace-check-qa-datasets"><img src="https://img.shields.io/badge/🤗%20Datasets-HuggingFace-yellow"/></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/Code%20License-MIT-green.svg"/></a>
+  <a href="https://creativecommons.org/licenses/by/4.0/"><img src="https://img.shields.io/badge/Data%20License-CC%20BY%204.0-lightgrey.svg"/></a>
 </p>
 
 ---
@@ -92,7 +94,6 @@ sbatch ./scripts/bash_scripts/cotempqa_sft_inference.sh "meta-llama/Llama-3.2-1B
 
 # for SFT models with reasoning trace with only temporal relation
 sbatch ./scripts/bash_scripts/cotempqa_sft_inference.sh "meta-llama/Llama-3.2-1B-Instruct" True True
-<<<<<<< HEAD
 ```
 
 ---
